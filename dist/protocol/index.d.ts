@@ -11,7 +11,7 @@ export type { MessageBodyTag, TextTag, BaseElement, TextElement, H1Element, H2El
 export { isTextElement, isBreakElement, isImageElement, isLinkElement, isListElement, isDivElement, isValidMessageBody, } from "./message-body.js";
 export type { Message, MessageAttachment, User, BaseMPRCCommand, BaseMPRCResponse, MPRCErrorResponse, VerifyProtocolCommand, VerifyProtocolCommandResponse, FindUserCommand, FindUserCommandResponse, SendMessageCommand, SendMessageCommandResponse, ListMessagesCommand, ListMessagesCommandResponse, ReadMessageCommand, ReadMessageCommandResponse, DeleteMessageCommand, DeleteMessageCommandResponse, MPRCCommand, MPRCCommandResponse, MPRCCommandName, } from "./types.js";
 export { MPRC_COMMAND_NAMES, isMPRCCommand, isVerifyCommand, isFindUserCommand, isSendMessageCommand, isValidMessage, isErrorResponse, createRequestId, createVerifyCommand, createFindUserCommand, createSendMessageCommand, } from "./types.js";
-export { MPRCError, NetworkError, DnsResolutionError, ConnectionError, TimeoutError, InvalidJsonError, InvalidCommandError, UnknownCommandError, ProtocolVerificationError, InvalidEmailError, UserNotFoundError, SenderVerificationError, MessageDeliveryError, } from "./errors.js";
+export { MPRCError, NetworkError, DnsResolutionError, ConnectionError, TimeoutError, InvalidJsonError, InvalidCommandError, UnknownCommandError, ProtocolVerificationError, InvalidEmailError, UserNotFoundError, MessageNotFoundError, SenderVerificationError, MessageDeliveryError, } from "./errors.js";
 export type { MessageToHTMLOptions } from "./html-renderer.js";
 export { messageBodyToHTML, messageBodyToHTMLDocument, messageToHTML, } from "./html-renderer.js";
 //# sourceMappingURL=index.d.ts.map

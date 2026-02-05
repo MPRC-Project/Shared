@@ -134,6 +134,7 @@ export {
   ProtocolVerificationError,
   InvalidEmailError,
   UserNotFoundError,
+  MessageNotFoundError,
   SenderVerificationError,
   MessageDeliveryError,
 } from "./errors.js";

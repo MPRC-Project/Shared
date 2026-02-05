@@ -146,6 +146,16 @@ export declare class SenderVerificationError extends MPRCError {
     toJSON(): Record<string, unknown>;
 }
 /**
+ * Error thrown when message with specified ID is not found.
+ */
+export declare class MessageNotFoundError extends MPRCError {
+    readonly code = "MESSAGE_NOT_FOUND";
+    readonly statusCode = 404;
+    /** The message ID that was not found */
+    readonly messageId: string;
+    constructor(messageId: string);
+}
+/**
  * Error thrown when a message cannot be delivered.
  */
 export declare class MessageDeliveryError extends MPRCError {

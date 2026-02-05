@@ -243,6 +243,19 @@ export class SenderVerificationError extends MPRCError {
     }
 }
 /**
+ * Error thrown when message with specified ID is not found.
+ */
+export class MessageNotFoundError extends MPRCError {
+    code = "MESSAGE_NOT_FOUND";
+    statusCode = 404;
+    /** The message ID that was not found */
+    messageId;
+    constructor(messageId) {
+        super(`Message not found: ${messageId}`);
+        this.messageId = messageId;
+    }
+}
+/**
  * Error thrown when a message cannot be delivered.
  */
 export class MessageDeliveryError extends MPRCError {
