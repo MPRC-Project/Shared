@@ -347,13 +347,20 @@ export interface ListMessagesCommandResponse extends BaseMPRCResponse {
   hasMore: boolean;
 }
 
-// ============================================================================
-// Future Commands (Prepared Interfaces)
-// ============================================================================
-
 /**
- * Command to read a specific message.
- * @future This command is planned for future implementation.
+ * Command to read specific message from a mailbox.
+ *
+ * This command retrieves a full message by its ID, optionally marking it as read.
+ *
+ * @example
+ * ```typescript
+ * // Read a specific message by ID
+ * const command: ReadMessageCommand = {
+ *   command: "READ_MESSAGE",
+ *   requestId: crypto.randomUUID(),
+ *   messageId: "12345",
+ *   markAsRead: true,
+ * ```
  */
 export interface ReadMessageCommand extends BaseMPRCCommand {
   command: "READ_MESSAGE";
@@ -365,7 +372,7 @@ export interface ReadMessageCommand extends BaseMPRCCommand {
 
 /**
  * Response to the READ_MESSAGE command.
- * @future This response type is planned for future implementation.
+ * Contains the full message content.
  */
 export interface ReadMessageCommandResponse extends BaseMPRCResponse {
   /** The full message content */
@@ -373,6 +380,10 @@ export interface ReadMessageCommandResponse extends BaseMPRCResponse {
   /** Whether the message was found */
   found: boolean;
 }
+
+// ============================================================================
+// Future Commands (Prepared Interfaces)
+// ============================================================================
 
 /**
  * Command to delete a message.
