@@ -355,7 +355,7 @@ export interface DeleteMessageCommandResponse extends BaseMPRCResponse {
 /**
  * All valid MPRC command names.
  */
-export declare const MPRC_COMMAND_NAMES: readonly ["VERIFY", "FIND_USER", "SEND_MESSAGE", "LIST_MESSAGES"];
+export declare const MPRC_COMMAND_NAMES: readonly ["VERIFY", "FIND_USER", "SEND_MESSAGE", "LIST_MESSAGES", "READ_MESSAGE"];
 /**
  * Type representing any valid MPRC command name.
  */

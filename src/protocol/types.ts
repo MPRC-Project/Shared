@@ -418,8 +418,8 @@ export const MPRC_COMMAND_NAMES = [
   "FIND_USER",
   "SEND_MESSAGE",
   "LIST_MESSAGES",
+  "READ_MESSAGE",
   // Future commands (uncomment when implemented):
-  // "READ_MESSAGE",
   // "DELETE_MESSAGE",
 ] as const;
 
