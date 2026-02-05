@@ -364,12 +364,12 @@ export type MPRCCommandName = (typeof MPRC_COMMAND_NAMES)[number];
  * Union type of all possible MPRC commands.
  * Add new command types here as they are implemented.
  */
-export type MPRCCommand = VerifyProtocolCommand | FindUserCommand | SendMessageCommand | ListMessagesCommand;
+export type MPRCCommand = VerifyProtocolCommand | FindUserCommand | SendMessageCommand | ListMessagesCommand | ReadMessageCommand;
 /**
  * Union type of all possible MPRC command responses.
  * Add new response types here as they are implemented.
  */
-export type MPRCCommandResponse = VerifyProtocolCommandResponse | FindUserCommandResponse | SendMessageCommandResponse | MPRCErrorResponse | ListMessagesCommandResponse;
+export type MPRCCommandResponse = VerifyProtocolCommandResponse | FindUserCommandResponse | SendMessageCommandResponse | MPRCErrorResponse | ListMessagesCommandResponse | ReadMessageCommandResponse;
 /**
  * Checks if the given data is a valid MPRC command.
  *

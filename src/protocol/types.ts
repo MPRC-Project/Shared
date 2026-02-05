@@ -436,9 +436,9 @@ export type MPRCCommand =
   | VerifyProtocolCommand
   | FindUserCommand
   | SendMessageCommand
-  | ListMessagesCommand;
+  | ListMessagesCommand
+  | ReadMessageCommand;
 // Future commands (uncomment when implemented):
-// | ReadMessageCommand
 // | DeleteMessageCommand;
 
 /**
@@ -450,9 +450,9 @@ export type MPRCCommandResponse =
   | FindUserCommandResponse
   | SendMessageCommandResponse
   | MPRCErrorResponse
-  | ListMessagesCommandResponse;
+  | ListMessagesCommandResponse
+  | ReadMessageCommandResponse;
 // Future responses (uncomment when implemented):
-// | ReadMessageCommandResponse
 // | DeleteMessageCommandResponse;
 
 // ============================================================================

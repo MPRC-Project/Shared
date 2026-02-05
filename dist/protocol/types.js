@@ -29,7 +29,6 @@ export const MPRC_COMMAND_NAMES = [
     // "DELETE_MESSAGE",
 ];
 // Future responses (uncomment when implemented):
-// | ReadMessageCommandResponse
 // | DeleteMessageCommandResponse;
 // ============================================================================
 // Type Guards
