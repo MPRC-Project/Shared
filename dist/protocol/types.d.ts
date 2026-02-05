@@ -408,6 +408,21 @@ export declare function isFindUserCommand(data: unknown): data is FindUserComman
  */
 export declare function isSendMessageCommand(data: unknown): data is SendMessageCommand;
 /**
+ * Checks if the given data is a LIST_MESSAGES command.
+ *
+ * @param data - The data to check
+ * @returns True if the data is a ListMessagesCommand
+ *
+ */
+export declare function isListMessagesCommand(data: unknown): data is ListMessagesCommand;
+/**
+ * Checks if the given data is a READ_MESSAGE command.
+ *
+ * @param data - The data to check
+ * @returns True if the data is a ReadMessageCommand
+ */
+export declare function isReadMessageCommand(data: unknown): data is ReadMessageCommand;
+/**
  * Checks if the given data is a valid Message object.
  *
  * @param data - The data to check

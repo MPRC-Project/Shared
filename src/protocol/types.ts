@@ -531,6 +531,43 @@ export function isSendMessageCommand(
 }
 
 /**
+ * Checks if the given data is a LIST_MESSAGES command.
+ *
+ * @param data - The data to check
+ * @returns True if the data is a ListMessagesCommand
+ *
+ */
+
+export function isListMessagesCommand(
+  data: unknown,
+): data is ListMessagesCommand {
+  return (
+    isMPRCCommand(data) &&
+    data.command === "LIST_MESSAGES" &&
+    "email" in data &&
+    typeof (data as ListMessagesCommand).email === "string"
+  );
+}
+
+/**
+ * Checks if the given data is a READ_MESSAGE command.
+ *
+ * @param data - The data to check
+ * @returns True if the data is a ReadMessageCommand
+ */
+
+export function isReadMessageCommand(
+  data: unknown,
+): data is ReadMessageCommand {
+  return (
+    isMPRCCommand(data) &&
+    data.command === "READ_MESSAGE" &&
+    "messageId" in data &&
+    typeof (data as ReadMessageCommand).messageId === "string"
+  );
+}
+
+/**
  * Checks if the given data is a valid Message object.
  *
  * @param data - The data to check
