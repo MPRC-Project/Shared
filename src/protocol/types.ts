@@ -664,3 +664,52 @@ export function createSendMessageCommand(message: Message): SendMessageCommand {
     message,
   };
 }
+
+/**
+ * Creates a READ_MESSAGE command.
+ *
+ * @param messageId - The ID of the message to read
+ * @param markAsRead - Whether to mark the message as read (default: false)
+ * @returns A new ReadMessageCommand
+ */
+export function createReadMessageCommand(
+  messageId: string,
+  markAsRead: boolean = false,
+): ReadMessageCommand {
+  return {
+    command: "READ_MESSAGE",
+    requestId: createRequestId(),
+    messageId,
+    markAsRead,
+  };
+}
+
+/**
+ * Creates a LIST_MESSAGES command.
+ * Supports optional filtering and pagination parameters.
+ * @param email - The email address of the mailbox to list messages from
+ * @param options - Optional filtering and pagination options
+ * @returns A new ListMessagesCommand
+ * @example
+ * // List first 20 messages in inbox
+ * createListMessagesCommand("user@example.com", { limit: 20 });
+ */
+
+export function createListMessagesCommand(
+  email: string,
+  options?: {
+    folder?: string;
+    tags?: string[];
+    limit?: number;
+    offset?: number;
+    since?: Date;
+    unreadOnly?: boolean;
+  },
+): ListMessagesCommand {
+  return {
+    command: "LIST_MESSAGES",
+    requestId: createRequestId(),
+    email,
+    ...options,
+  };
+}

@@ -467,4 +467,30 @@ export declare function createFindUserCommand(email: string): FindUserCommand;
  * @returns A new SendMessageCommand
  */
 export declare function createSendMessageCommand(message: Message): SendMessageCommand;
+/**
+ * Creates a READ_MESSAGE command.
+ *
+ * @param messageId - The ID of the message to read
+ * @param markAsRead - Whether to mark the message as read (default: false)
+ * @returns A new ReadMessageCommand
+ */
+export declare function createReadMessageCommand(messageId: string, markAsRead?: boolean): ReadMessageCommand;
+/**
+ * Creates a LIST_MESSAGES command.
+ * Supports optional filtering and pagination parameters.
+ * @param email - The email address of the mailbox to list messages from
+ * @param options - Optional filtering and pagination options
+ * @returns A new ListMessagesCommand
+ * @example
+ * // List first 20 messages in inbox
+ * createListMessagesCommand("user@example.com", { limit: 20 });
+ */
+export declare function createListMessagesCommand(email: string, options?: {
+    folder?: string;
+    tags?: string[];
+    limit?: number;
+    offset?: number;
+    since?: Date;
+    unreadOnly?: boolean;
+}): ListMessagesCommand;
 //# sourceMappingURL=types.d.ts.map

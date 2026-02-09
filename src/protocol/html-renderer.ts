@@ -203,7 +203,7 @@ function renderImageElement(
     "attachmentId" in element &&
     typeof element.attachmentId === "string"
   ) {
-    const attachment = attachments?.find(a => a.id === element.attachmentId);
+    const attachment = attachments?.find((a) => a.id === element.attachmentId);
 
     if (attachment) {
       if (attachment.content) {
