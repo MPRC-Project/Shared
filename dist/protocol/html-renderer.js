@@ -154,9 +154,9 @@ function renderImageElement(element, attachments) {
     if ("url" in element && element.url) {
         src = element.url;
     }
-    else if ("attachmentIndex" in element &&
-        element.attachmentIndex !== undefined) {
-        const attachment = attachments?.[element.attachmentIndex];
+    else if ("attachmentId" in element &&
+        typeof element.attachmentId === "string") {
+        const attachment = attachments?.find(a => a.id === element.attachmentId);
         if (attachment) {
             if (attachment.content) {
                 src = `data:${attachment.mimeType};base64,${attachment.content}`;
@@ -166,7 +166,7 @@ function renderImageElement(element, attachments) {
             }
         }
         else {
-            src = `attachment://${element.attachmentIndex}`;
+            src = `attachment://${element.attachmentId}`;
         }
     }
     const alt = element.alt ? ` alt="${escapeHTML(element.alt)}"` : "";

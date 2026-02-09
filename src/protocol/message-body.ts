@@ -199,8 +199,8 @@ export interface BreakElement extends BaseElement<"br"> {}
 // ============================================================================
 
 /**
- * Image element that can reference either a URL or an attachment.
- * Must have either `url` OR `attachmentIndex`, but not both.
+ * Image element that can reference either a URL or an attachment by id.
+ * Must have either `url` OR `attachmentId`, but not both.
  *
  * @example
  * ```typescript
@@ -211,10 +211,10 @@ export interface BreakElement extends BaseElement<"br"> {}
  *   alt: "Example image",
  * };
  *
- * // Image from attachment
+ * // Image from attachment by id
  * const attachmentImage: ImageElement = {
  *   tag: "img",
- *   attachmentIndex: 0,
+ *   attachmentId: "abc123",
  *   alt: "Attached image",
  * };
  * ```
@@ -227,8 +227,8 @@ export type ImageElement = ImageFromUrl | ImageFromAttachment;
 export interface ImageFromUrl extends BaseElement<"img"> {
   /** URL of the image */
   url: string;
-  /** Attachment index is not allowed when using URL */
-  attachmentIndex?: never;
+  /** Attachment id is not allowed when using URL */
+  attachmentId?: never;
   /** Alternative text for the image */
   alt?: string;
   /** Optional width in pixels */
@@ -240,11 +240,11 @@ export interface ImageFromUrl extends BaseElement<"img"> {
 }
 
 /**
- * Image element referencing a message attachment by index.
+ * Image element referencing a message attachment by id.
  */
 export interface ImageFromAttachment extends BaseElement<"img"> {
-  /** Index into the message's attachments array */
-  attachmentIndex: number;
+  /** Id of the attachment in the message's attachments array */
+  attachmentId: string;
   /** URL is not allowed when using attachment */
   url?: never;
   /** Alternative text for the image */

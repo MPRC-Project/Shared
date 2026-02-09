@@ -200,10 +200,11 @@ function renderImageElement(
   if ("url" in element && element.url) {
     src = element.url;
   } else if (
-    "attachmentIndex" in element &&
-    element.attachmentIndex !== undefined
+    "attachmentId" in element &&
+    typeof element.attachmentId === "string"
   ) {
-    const attachment = attachments?.[element.attachmentIndex];
+    const attachment = attachments?.find(a => a.id === element.attachmentId);
+
     if (attachment) {
       if (attachment.content) {
         src = `data:${attachment.mimeType};base64,${attachment.content}`;
@@ -211,7 +212,7 @@ function renderImageElement(
         src = `attachment://${attachment.id}`;
       }
     } else {
-      src = `attachment://${element.attachmentIndex}`;
+      src = `attachment://${element.attachmentId}`;
     }
   }
 
