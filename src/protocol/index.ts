@@ -119,6 +119,8 @@ export {
   createVerifyCommand,
   createFindUserCommand,
   createSendMessageCommand,
+  createListMessagesCommand,
+  createReadMessageCommand,
 } from "./types.js";
 
 // Errors

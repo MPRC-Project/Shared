@@ -31,7 +31,7 @@
 export { MPRC_PORT, MPRC_PROTOCOL_VERSION, MPRC_PROTOCOL_IDENTIFIER, DEFAULT_TIMEOUT_MS, CONNECTION_TIMEOUT_MS, } from "./constants.js";
 export { sizeToCSS, spacingToCSS, borderRadiusToCSS, elementStyleToCSS, blockStyleToCSS, listStyleToCSS, } from "./protocol/index.js";
 export { isTextElement, isBreakElement, isImageElement, isLinkElement, isListElement, isDivElement, isValidMessageBody, } from "./protocol/index.js";
-export { MPRC_COMMAND_NAMES, isMPRCCommand, isVerifyCommand, isFindUserCommand, isSendMessageCommand, isValidMessage, isErrorResponse, createRequestId, createVerifyCommand, createFindUserCommand, createSendMessageCommand, } from "./protocol/index.js";
+export { MPRC_COMMAND_NAMES, isMPRCCommand, isVerifyCommand, isFindUserCommand, isSendMessageCommand, isValidMessage, isErrorResponse, createRequestId, createVerifyCommand, createFindUserCommand, createSendMessageCommand, createListMessagesCommand, createReadMessageCommand, } from "./protocol/index.js";
 // Errors
 export { MPRCError, NetworkError, DnsResolutionError, ConnectionError, TimeoutError, InvalidJsonError, InvalidCommandError, UnknownCommandError, ProtocolVerificationError, InvalidEmailError, UserNotFoundError, SenderVerificationError, MessageDeliveryError, } from "./protocol/index.js";
 export { messageBodyToHTML, messageBodyToHTMLDocument, messageToHTML, } from "./protocol/index.js";

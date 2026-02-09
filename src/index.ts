@@ -154,6 +154,8 @@ export {
   createVerifyCommand,
   createFindUserCommand,
   createSendMessageCommand,
+  createListMessagesCommand,
+  createReadMessageCommand,
 } from "./protocol/index.js";
 
 // Errors
