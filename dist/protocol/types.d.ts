@@ -59,20 +59,25 @@ export interface Message {
     folder?: string;
 }
 /**
- * Represents a message attachment.
- * Prepared for future attachment support.
+ * Represents a message attachment during transmission.
  */
 export interface MessageAttachment {
-    /** Unique identifier for the attachment */
+    /** Unique identifier for this attachment */
     id: string;
-    /** Original filename */
+    /** Original filename of the attachment */
     filename: string;
-    /** MIME type of the attachment */
-    mimeType: string;
-    /** Size in bytes */
-    size: number;
-    /** Base64 encoded content or reference URL */
+    /**
+     * Base64-encoded blob data.
+     * Required when sending, may be undefined in metadata-only contexts.
+     */
     content?: string;
+    /** Size of the attachment in bytes */
+    size?: number;
+    /**
+     * MIME type of the attachment.
+     * Reserved for future use - not currently validated.
+     */
+    mimeType?: string;
 }
 /**
  * Represents a user in the MPRC system.
