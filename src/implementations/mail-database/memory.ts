@@ -19,6 +19,7 @@ import type {
   IAttachmentStorage,
   AttachmentMetadata,
 } from "../../protocol/attachment.js";
+import type { StoredMessage } from "../../protocol/types.js";
 /**
  * In-memory database implementation for the MPRC server.
  *
@@ -53,13 +54,11 @@ export class InMemoryDatabase implements IMPRCDatabase {
   /** Map of email to user ID for quick lookup */
   private emailIndex: Map<string, string> = new Map();
   /** Map of message ID to Message object */
-  private messages: Map<string, Message> = new Map();
+  private messages: Map<string, StoredMessage> = new Map();
   /** Map of recipient email to set of message IDs */
   private recipientIndex: Map<string, Set<string>> = new Map();
   /** Track read status of messages */
   private readStatus: Map<string, boolean> = new Map();
-  /** Map of message ID to attachment metadata arrays */
-  private attachmentMetadata: Map<string, AttachmentMetadata[]> = new Map();
 
   /** Reference to the attachment storage system */
   private attachmentStorage?: IAttachmentStorage;
@@ -222,20 +221,15 @@ export class InMemoryDatabase implements IMPRCDatabase {
    * @param message - The message to store
    * @returns The stored message with receivedAt timestamp
    */
-  async storeMessage(message: Message): Promise<Message> {
-    const storedMessage: Message = {
-      ...message,
+  async storeMessage(message: Message): Promise<StoredMessage> {
+    const { attachments, ...messageWithoutAttachments } = message;
+    const storedMessage: StoredMessage = {
+      ...messageWithoutAttachments,
       receivedAt: new Date(),
     };
 
     // Process attachments if present
-    console.log(
-      `📩 Storing message from ${message.from} to ${message.to} with subject "${message.subject}"`,
-    );
-    console.log(
-      `📎 Message has ${message.attachments?.length ?? 0} attachment(s)`,
-    );
-    if (message.attachments && message.attachments.length > 0) {
+    if (attachments && attachments.length > 0) {
       if (!this.attachmentStorage) {
         throw new Error(
           "Attachment storage not configured but message has attachments",
@@ -244,7 +238,7 @@ export class InMemoryDatabase implements IMPRCDatabase {
 
       const metadataArray: AttachmentMetadata[] = [];
 
-      for (const attachment of message.attachments) {
+      for (const attachment of attachments) {
         if (!attachment.content) {
           throw new Error(
             `Attachment ${attachment.id} is missing content field`,
@@ -265,17 +259,7 @@ export class InMemoryDatabase implements IMPRCDatabase {
         metadataArray.push(metadata);
       }
 
-      // Save metadata mapping
-      this.attachmentMetadata.set(message.id, metadataArray);
-
-      // Remove content from stored message
-      storedMessage.attachments = metadataArray.map((meta) => ({
-        id: meta.id,
-        filename: meta.filename,
-        size: meta.size,
-        mimeType: meta.mimeType ?? "application/octet-stream",
-        content: "", // Clear content to save memory; actual content is in storages
-      }));
+      storedMessage.attachments = metadataArray;
     }
 
     this.messages.set(message.id, storedMessage);
@@ -283,6 +267,7 @@ export class InMemoryDatabase implements IMPRCDatabase {
 
     // Index by recipient
     const recipientEmail = message.to.toLowerCase();
+
     if (!this.recipientIndex.has(recipientEmail)) {
       this.recipientIndex.set(recipientEmail, new Set());
     }
@@ -297,37 +282,13 @@ export class InMemoryDatabase implements IMPRCDatabase {
    * @param id - The message's unique identifier
    * @returns The message if found, null otherwise
    */
-  async getMessageById(id: string): Promise<Message | null> {
+  async getMessageById(id: string): Promise<StoredMessage | null> {
     const message = this.messages.get(id);
     if (!message) {
       return null;
     }
 
-    // If no attachments, return as-is
-    const metadata = this.attachmentMetadata.get(id);
-    if (!metadata || metadata.length === 0) {
-      return message;
-    }
-
-    // Load full attachments
-    if (!this.attachmentStorage) {
-      throw new Error("Attachment storage not configured");
-    }
-
-    const fullAttachments = await Promise.all(
-      metadata.map((meta) => this.attachmentStorage!.retrieveAttachment(meta)),
-    );
-
-    console.log(
-      `📂 Retrieved message ${id} with ${fullAttachments.length} attachment(s)`,
-    );
-
-    console.debug("📎 Attachment metadata:", metadata);
-
-    return {
-      ...message,
-      attachments: fullAttachments,
-    };
+    return message;
   }
 
   /**
@@ -340,7 +301,7 @@ export class InMemoryDatabase implements IMPRCDatabase {
   async listMessages(
     email: string,
     options: ListMessagesOptions = {},
-  ): Promise<PaginatedResult<Message>> {
+  ): Promise<PaginatedResult<StoredMessage>> {
     const {
       page = 1,
       pageSize = 20,
@@ -353,7 +314,7 @@ export class InMemoryDatabase implements IMPRCDatabase {
     const recipientEmail = email.toLowerCase();
     const messageIds = this.recipientIndex.get(recipientEmail) ?? new Set();
 
-    let messages: Message[] = [];
+    let messages: StoredMessage[] = [];
 
     for (const id of messageIds) {
       const message = this.messages.get(id);
@@ -399,11 +360,11 @@ export class InMemoryDatabase implements IMPRCDatabase {
    * @param email - The recipient's email address
    * @returns Array of messages
    */
-  async getMessagesForUser(email: string): Promise<Message[]> {
+  async getMessagesForUser(email: string): Promise<StoredMessage[]> {
     const recipientEmail = email.toLowerCase();
     const messageIds = this.recipientIndex.get(recipientEmail) ?? new Set();
 
-    const messages: Message[] = [];
+    const messages: StoredMessage[] = [];
     for (const id of messageIds) {
       const message = await this.getMessageById(id); // Use updated method
       if (message) {
@@ -430,43 +391,14 @@ export class InMemoryDatabase implements IMPRCDatabase {
       return false;
     }
 
-    // Get attachment metadata before deletion
-    const metadata = this.attachmentMetadata.get(id);
-
     // Remove from indices
     const recipientEmail = message.to.toLowerCase();
     this.recipientIndex.get(recipientEmail)?.delete(id);
 
     this.messages.delete(id);
     this.readStatus.delete(id);
-    this.attachmentMetadata.delete(id);
-
-    // Clean up orphaned attachments
-    if (metadata && this.attachmentStorage) {
-      for (const meta of metadata) {
-        const refCount = await this.getAttachmentReferenceCount(
-          meta.contentHash,
-        );
-        if (refCount === 0) {
-          await this.attachmentStorage.deleteAttachment(meta.contentHash);
-        }
-      }
-    }
 
     return true;
-  }
-
-  /**
-   * Gets the reference count for an attachment hash.
-   */
-  async getAttachmentReferenceCount(contentHash: string): Promise<number> {
-    let count = 0;
-    for (const metadata of this.attachmentMetadata.values()) {
-      if (metadata.some((m) => m.contentHash === contentHash)) {
-        count++;
-      }
-    }
-    return count;
   }
 
   /**
@@ -511,7 +443,6 @@ export class InMemoryDatabase implements IMPRCDatabase {
     this.messages.clear();
     this.recipientIndex.clear();
     this.readStatus.clear();
-    this.attachmentMetadata.clear();
   }
 }
 

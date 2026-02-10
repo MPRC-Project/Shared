@@ -7,7 +7,7 @@
  * @module protocol/html-renderer
  */
 
-import type { MessageAttachment } from "./types.js";
+import type { MessageAttachment } from "./attachment.js";
 import type {
   MessageBody,
   MessageBodyElement,

@@ -11,6 +11,7 @@
 import type { Message, User } from "@mprc/shared";
 import type { IMPRCDatabase, ListMessagesOptions, PaginatedResult } from "../../protocol/mail-database.js";
 import type { IAttachmentStorage } from "../../protocol/attachment.js";
+import type { StoredMessage } from "../../protocol/types.js";
 /**
  * In-memory database implementation for the MPRC server.
  *
@@ -50,8 +51,6 @@ export declare class InMemoryDatabase implements IMPRCDatabase {
     private recipientIndex;
     /** Track read status of messages */
     private readStatus;
-    /** Map of message ID to attachment metadata arrays */
-    private attachmentMetadata;
     /** Reference to the attachment storage system */
     private attachmentStorage?;
     /**
@@ -116,14 +115,14 @@ export declare class InMemoryDatabase implements IMPRCDatabase {
      * @param message - The message to store
      * @returns The stored message with receivedAt timestamp
      */
-    storeMessage(message: Message): Promise<Message>;
+    storeMessage(message: Message): Promise<StoredMessage>;
     /**
      * Retrieves a message by its unique ID.
      *
      * @param id - The message's unique identifier
      * @returns The message if found, null otherwise
      */
-    getMessageById(id: string): Promise<Message | null>;
+    getMessageById(id: string): Promise<StoredMessage | null>;
     /**
      * Lists messages for a user's mailbox with filtering and pagination.
      *
@@ -131,14 +130,14 @@ export declare class InMemoryDatabase implements IMPRCDatabase {
      * @param options - Filtering and pagination options
      * @returns Paginated list of messages
      */
-    listMessages(email: string, options?: ListMessagesOptions): Promise<PaginatedResult<Message>>;
+    listMessages(email: string, options?: ListMessagesOptions): Promise<PaginatedResult<StoredMessage>>;
     /**
      * Retrieves all messages sent to a specific email address.
      *
      * @param email - The recipient's email address
      * @returns Array of messages
      */
-    getMessagesForUser(email: string): Promise<Message[]>;
+    getMessagesForUser(email: string): Promise<StoredMessage[]>;
     /**
      * Deletes a message by its unique ID.
      *
@@ -146,10 +145,6 @@ export declare class InMemoryDatabase implements IMPRCDatabase {
      * @returns True if the message was deleted, false if not found
      */
     deleteMessage(id: string): Promise<boolean>;
-    /**
-     * Gets the reference count for an attachment hash.
-     */
-    getAttachmentReferenceCount(contentHash: string): Promise<number>;
     /**
      * Marks a message as read or unread.
      *

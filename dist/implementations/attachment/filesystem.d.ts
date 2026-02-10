@@ -9,8 +9,7 @@
  *
  * @module @mprc/server/attachments
  */
-import type { IAttachmentStorage, AttachmentMetadata } from "../../protocol/attachment.js";
-import type { MessageAttachment } from "../../protocol/types.js";
+import type { IAttachmentStorage, AttachmentMetadata, MessageAttachment } from "../../protocol/attachment.js";
 /**
  * Configuration options for filesystem storage.
  */

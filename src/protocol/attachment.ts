@@ -7,7 +7,32 @@
  *
  */
 
-import type { MessageAttachment } from "./types.js";
+/**
+ * Represents a full message attachment with its content.
+ */
+
+export interface MessageAttachment {
+  /** Unique identifier for this attachment */
+  id: string;
+
+  /** Original filename of the attachment */
+  filename: string;
+
+  /**
+   * Base64-encoded blob data.
+   * Required when sendin
+   */
+  content: string;
+
+  /** Size of the attachment in bytes */
+  size?: number;
+
+  /**
+   * MIME type of the attachment.
+   * Reserved for future use - not currently validated.
+   */
+  mimeType?: string;
+}
 
 /**
  * Metadata about a stored attachment.

@@ -8,7 +8,7 @@
  * @module @mprc/server/database
  */
 
-import type { Message, User } from "./types.js";
+import type { Message, StoredMessage, User } from "./types.js";
 import type { AttachmentMetadata } from "./attachment.js";
 
 /**
@@ -123,7 +123,7 @@ export interface IMPRCDatabase {
    * @param message - The message to store
    * @returns The stored message with any generated fields
    */
-  storeMessage(message: Message): Promise<Message>;
+  storeMessage(message: Message): Promise<StoredMessage>;
 
   /**
    * Retrieves a message by its unique ID.
@@ -131,7 +131,7 @@ export interface IMPRCDatabase {
    * @param id - The message's unique identifier
    * @returns The message if found, null otherwise
    */
-  getMessageById(id: string): Promise<Message | null>;
+  getMessageById(id: string): Promise<StoredMessage | null>;
 
   /**
    * Lists messages for a user's mailbox.
@@ -143,7 +143,7 @@ export interface IMPRCDatabase {
   listMessages(
     email: string,
     options?: ListMessagesOptions,
-  ): Promise<PaginatedResult<Message>>;
+  ): Promise<PaginatedResult<StoredMessage>>;
 
   /**
    * Retrieves all messages sent to a specific email address.
@@ -151,7 +151,7 @@ export interface IMPRCDatabase {
    * @param email - The recipient's email address
    * @returns Array of messages
    */
-  getMessagesForUser(email: string): Promise<Message[]>;
+  getMessagesForUser(email: string): Promise<StoredMessage[]>;
 
   /**
    * Deletes a message by its unique ID.

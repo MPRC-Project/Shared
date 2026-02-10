@@ -47,8 +47,6 @@ export class InMemoryDatabase {
     recipientIndex = new Map();
     /** Track read status of messages */
     readStatus = new Map();
-    /** Map of message ID to attachment metadata arrays */
-    attachmentMetadata = new Map();
     /** Reference to the attachment storage system */
     attachmentStorage;
     // =========================================================================
@@ -187,19 +185,18 @@ export class InMemoryDatabase {
      * @returns The stored message with receivedAt timestamp
      */
     async storeMessage(message) {
+        const { attachments, ...messageWithoutAttachments } = message;
         const storedMessage = {
-            ...message,
+            ...messageWithoutAttachments,
             receivedAt: new Date(),
         };
         // Process attachments if present
-        console.log(`📩 Storing message from ${message.from} to ${message.to} with subject "${message.subject}"`);
-        console.log(`📎 Message has ${message.attachments?.length ?? 0} attachment(s)`);
-        if (message.attachments && message.attachments.length > 0) {
+        if (attachments && attachments.length > 0) {
             if (!this.attachmentStorage) {
                 throw new Error("Attachment storage not configured but message has attachments");
             }
             const metadataArray = [];
-            for (const attachment of message.attachments) {
+            for (const attachment of attachments) {
                 if (!attachment.content) {
                     throw new Error(`Attachment ${attachment.id} is missing content field`);
                 }
@@ -214,16 +211,7 @@ export class InMemoryDatabase {
                 });
                 metadataArray.push(metadata);
             }
-            // Save metadata mapping
-            this.attachmentMetadata.set(message.id, metadataArray);
-            // Remove content from stored message
-            storedMessage.attachments = metadataArray.map((meta) => ({
-                id: meta.id,
-                filename: meta.filename,
-                size: meta.size,
-                mimeType: meta.mimeType ?? "application/octet-stream",
-                content: "", // Clear content to save memory; actual content is in storages
-            }));
+            storedMessage.attachments = metadataArray;
         }
         this.messages.set(message.id, storedMessage);
         this.readStatus.set(message.id, false);
@@ -246,22 +234,7 @@ export class InMemoryDatabase {
         if (!message) {
             return null;
         }
-        // If no attachments, return as-is
-        const metadata = this.attachmentMetadata.get(id);
-        if (!metadata || metadata.length === 0) {
-            return message;
-        }
-        // Load full attachments
-        if (!this.attachmentStorage) {
-            throw new Error("Attachment storage not configured");
-        }
-        const fullAttachments = await Promise.all(metadata.map((meta) => this.attachmentStorage.retrieveAttachment(meta)));
-        console.log(`📂 Retrieved message ${id} with ${fullAttachments.length} attachment(s)`);
-        console.debug("📎 Attachment metadata:", metadata);
-        return {
-            ...message,
-            attachments: fullAttachments,
-        };
+        return message;
     }
     /**
      * Lists messages for a user's mailbox with filtering and pagination.
@@ -342,36 +315,12 @@ export class InMemoryDatabase {
         if (!message) {
             return false;
         }
-        // Get attachment metadata before deletion
-        const metadata = this.attachmentMetadata.get(id);
         // Remove from indices
         const recipientEmail = message.to.toLowerCase();
         this.recipientIndex.get(recipientEmail)?.delete(id);
         this.messages.delete(id);
         this.readStatus.delete(id);
-        this.attachmentMetadata.delete(id);
-        // Clean up orphaned attachments
-        if (metadata && this.attachmentStorage) {
-            for (const meta of metadata) {
-                const refCount = await this.getAttachmentReferenceCount(meta.contentHash);
-                if (refCount === 0) {
-                    await this.attachmentStorage.deleteAttachment(meta.contentHash);
-                }
-            }
-        }
         return true;
-    }
-    /**
-     * Gets the reference count for an attachment hash.
-     */
-    async getAttachmentReferenceCount(contentHash) {
-        let count = 0;
-        for (const metadata of this.attachmentMetadata.values()) {
-            if (metadata.some((m) => m.contentHash === contentHash)) {
-                count++;
-            }
-        }
-        return count;
     }
     /**
      * Marks a message as read or unread.
@@ -411,7 +360,6 @@ export class InMemoryDatabase {
         this.messages.clear();
         this.recipientIndex.clear();
         this.readStatus.clear();
-        this.attachmentMetadata.clear();
     }
 }
 /**

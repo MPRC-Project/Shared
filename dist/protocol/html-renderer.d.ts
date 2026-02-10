@@ -6,7 +6,7 @@
  *
  * @module protocol/html-renderer
  */
-import type { MessageAttachment } from "./types.js";
+import type { MessageAttachment } from "./attachment.js";
 import type { MessageBody } from "./message-body.js";
 /**
  * Converts a MessageBody to an HTML string.

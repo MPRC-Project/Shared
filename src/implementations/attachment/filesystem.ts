@@ -16,8 +16,8 @@ import crypto from "node:crypto";
 import type {
   IAttachmentStorage,
   AttachmentMetadata,
+  MessageAttachment,
 } from "../../protocol/attachment.js";
-import type { MessageAttachment } from "../../protocol/types.js";
 
 /**
  * Configuration options for filesystem storage.

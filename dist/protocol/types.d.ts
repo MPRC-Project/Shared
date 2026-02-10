@@ -12,7 +12,7 @@
  *
  * @module protocol/types
  */
-import type { AttachmentMetadata } from "./attachment.js";
+import type { AttachmentMetadata, MessageAttachment } from "./attachment.js";
 import type { MessageBody } from "./message-body.js";
 export type { MessageBody, MessageBodyElement } from "./message-body.js";
 export { isTextElement, isBreakElement, isImageElement, isLinkElement, isListElement, isDivElement, isValidMessageBody, } from "./message-body.js";
@@ -50,8 +50,6 @@ export interface Message {
     receivedAt?: Date;
     /** Optional array of attachment references */
     attachments?: MessageAttachment[];
-    /** Optional message headers for extensibility */
-    headers?: Record<string, string>;
     /** Optional parameter, references the ID of the message this is a response to */
     responseTo?: string;
     /** Optional array of tags associated with the message */
@@ -60,26 +58,18 @@ export interface Message {
     folder?: string;
 }
 /**
- * Represents a message attachment during transmission.
+ * Message format for storage: attachments are AttachmentMetadata[]
  */
-export interface MessageAttachment {
-    /** Unique identifier for this attachment */
-    id: string;
-    /** Original filename of the attachment */
-    filename: string;
-    /**
-     * Base64-encoded blob data.
-     * Required when sendin
-     */
-    content: string;
-    /** Size of the attachment in bytes */
-    size?: number;
-    /**
-     * MIME type of the attachment.
-     * Reserved for future use - not currently validated.
-     */
-    mimeType?: string;
+export interface StoredMessage extends Omit<Message, "attachments"> {
+    attachments?: AttachmentMetadata[];
 }
+/**
+ * Message format for reading: attachments can be either MessageAttachment or AttachmentMetadata
+ * depending on the context.
+ */
+export type AnyMessage = Omit<Message, "attachments"> & {
+    attachments?: (MessageAttachment | AttachmentMetadata)[];
+};
 /**
  * Represents a user in the MPRC system.
  */
@@ -454,6 +444,21 @@ export declare function isReadMessageCommand(data: unknown): data is ReadMessage
  * @returns True if the data is a valid Message
  */
 export declare function isValidMessage(data: unknown): data is Message;
+/**
+ * Check if the given data is an array of AttachmentMetadata objects.
+ *
+ * @param data - The data to check
+ * @returns True if the data is an array of AttachmentMetadata
+ * @example
+ * ```typescript
+ * const data = JSON.parse(receivedData);
+ * if (isAttachmentMetadataArray(data)) {
+ *  // data is now typed as AttachmentMetadata[]
+ *  console.log(data[0].contentHash);
+ * }
+ *
+ */
+export declare function isAttachmentMetadataArray(arr: unknown): arr is AttachmentMetadata[];
 /**
  * Checks if the given data is an MPRC error response.
  *
