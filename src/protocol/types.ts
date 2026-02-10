@@ -401,8 +401,9 @@ export interface LoadAttachmentCommand extends BaseMPRCCommand {
   attachmentMetadata: AttachmentMetadata;
 }
 
-export interface LoadAttachmentCommandResponse
-  extends BaseMPRCResponse, MessageAttachment {}
+export interface LoadAttachmentCommandResponse extends BaseMPRCResponse {
+  attachment: MessageAttachment;
+}
 
 // ============================================================================
 // Future Commands (Prepared Interfaces)

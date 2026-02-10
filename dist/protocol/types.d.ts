@@ -348,7 +348,8 @@ export interface LoadAttachmentCommand extends BaseMPRCCommand {
     /** Metadata of the attachment to load */
     attachmentMetadata: AttachmentMetadata;
 }
-export interface LoadAttachmentCommandResponse extends BaseMPRCResponse, MessageAttachment {
+export interface LoadAttachmentCommandResponse extends BaseMPRCResponse {
+    attachment: MessageAttachment;
 }
 /**
  * Command to delete a message.
