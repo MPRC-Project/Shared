@@ -68,9 +68,9 @@ export interface MessageAttachment {
     filename: string;
     /**
      * Base64-encoded blob data.
-     * Required when sending, may be undefined in metadata-only contexts.
+     * Required when sendin
      */
-    content?: string;
+    content: string;
     /** Size of the attachment in bytes */
     size?: number;
     /**

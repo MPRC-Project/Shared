@@ -81,6 +81,19 @@ export {
   isValidMessageBody,
 } from "./message-body.js";
 
+// Mail database types
+export type {
+  IMPRCDatabase,
+  ListMessagesOptions,
+  PaginatedResult,
+} from "./mail-database.js";
+
+// Attachment types
+export type {
+  StoredAttachmentMetadata,
+  IAttachmentStorage,
+} from "./attachment.js";
+
 // Types
 export type {
   Message,

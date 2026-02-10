@@ -36,4 +36,9 @@ export { MPRC_COMMAND_NAMES, isMPRCCommand, isVerifyCommand, isFindUserCommand, 
 export { MPRCError, NetworkError, DnsResolutionError, ConnectionError, TimeoutError, InvalidJsonError, InvalidCommandError, UnknownCommandError, ProtocolVerificationError, InvalidEmailError, UserNotFoundError, SenderVerificationError, MessageDeliveryError, AttachmentNotFoundError, } from "./protocol/index.js";
 export { messageBodyToHTML, messageBodyToHTMLDocument, messageToHTML, } from "./protocol/index.js";
 export { MPRCConnection, extractDomainFromEmail, resolveDomain, resolveEmailToServerAddress, sendSingleCommand, } from "./network/index.js";
+// ============================================================================
+// Implementations
+// ============================================================================
+export { FilesystemAttachmentStorage, createDefaultAttachmentStorage, } from "./implementations/attachment/memory.js";
+export { InMemoryDatabase, createDefaultDatabase, } from "./implementations/mail-database/memory.js";
 //# sourceMappingURL=index.js.map

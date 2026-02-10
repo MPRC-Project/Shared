@@ -206,3 +206,18 @@ export {
   resolveEmailToServerAddress,
   sendSingleCommand,
 } from "./network/index.js";
+
+// ============================================================================
+// Implementations
+// ============================================================================
+
+export {
+  FilesystemAttachmentStorage,
+  createDefaultAttachmentStorage,
+} from "./implementations/attachment/memory.js";
+export type { FilesystemStorageOptions } from "./implementations/attachment/memory.js";
+
+export {
+  InMemoryDatabase,
+  createDefaultDatabase,
+} from "./implementations/mail-database/memory.js";
