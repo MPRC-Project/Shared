@@ -135,6 +135,8 @@ export type {
   ListMessagesCommandResponse,
   ReadMessageCommand,
   ReadMessageCommandResponse,
+  LoadAttachmentCommand,
+  LoadAttachmentCommandResponse,
   DeleteMessageCommand,
   DeleteMessageCommandResponse,
   MPRCCommand,
@@ -150,12 +152,14 @@ export {
   isSendMessageCommand,
   isValidMessage,
   isErrorResponse,
+  isLoadAttachmentCommand,
   createRequestId,
   createVerifyCommand,
   createFindUserCommand,
   createSendMessageCommand,
   createListMessagesCommand,
   createReadMessageCommand,
+  createLoadAttachmentCommand,
 } from "./protocol/index.js";
 
 // Errors

@@ -101,6 +101,8 @@ export type {
   ReadMessageCommandResponse,
   DeleteMessageCommand,
   DeleteMessageCommandResponse,
+  LoadAttachmentCommand,
+  LoadAttachmentCommandResponse,
   MPRCCommand,
   MPRCCommandResponse,
   MPRCCommandName,
@@ -115,12 +117,14 @@ export {
   isSendMessageCommand,
   isValidMessage,
   isErrorResponse,
+  isLoadAttachmentCommand,
   createRequestId,
   createVerifyCommand,
   createFindUserCommand,
   createSendMessageCommand,
   createListMessagesCommand,
   createReadMessageCommand,
+  createLoadAttachmentCommand,
 } from "./types.js";
 
 // Errors

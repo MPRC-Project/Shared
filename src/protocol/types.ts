@@ -389,6 +389,20 @@ export interface ReadMessageCommandResponse extends BaseMPRCResponse {
   found: boolean;
 }
 
+/**
+ * Command to load attachment for message
+ *
+ */
+
+export interface LoadAttachmentCommand extends BaseMPRCCommand {
+  command: "LOAD_ATTACHMENT";
+  /** Content hash of the attachment to load */
+  contentHash: string;
+}
+
+export interface LoadAttachmentCommandResponse
+  extends BaseMPRCResponse, MessageAttachment {}
+
 // ============================================================================
 // Future Commands (Prepared Interfaces)
 // ============================================================================
@@ -427,6 +441,7 @@ export const MPRC_COMMAND_NAMES = [
   "SEND_MESSAGE",
   "LIST_MESSAGES",
   "READ_MESSAGE",
+  "LOAD_ATTACHMENT",
   // Future commands (uncomment when implemented):
   // "DELETE_MESSAGE",
 ] as const;
@@ -445,7 +460,8 @@ export type MPRCCommand =
   | FindUserCommand
   | SendMessageCommand
   | ListMessagesCommand
-  | ReadMessageCommand;
+  | ReadMessageCommand
+  | LoadAttachmentCommand;
 // Future commands (uncomment when implemented):
 // | DeleteMessageCommand;
 
@@ -459,7 +475,8 @@ export type MPRCCommandResponse =
   | SendMessageCommandResponse
   | MPRCErrorResponse
   | ListMessagesCommandResponse
-  | ReadMessageCommandResponse;
+  | ReadMessageCommandResponse
+  | LoadAttachmentCommandResponse;
 // Future responses (uncomment when implemented):
 // | DeleteMessageCommandResponse;
 
@@ -554,6 +571,23 @@ export function isListMessagesCommand(
     data.command === "LIST_MESSAGES" &&
     "email" in data &&
     typeof (data as ListMessagesCommand).email === "string"
+  );
+}
+
+/**
+ * Checks if the given data is a LOAD_ATTACHMENT command.
+ *
+ * @param data - The data to check
+ * @returns True if the data is a LoadAttachmentCommand
+ */
+export function isLoadAttachmentCommand(
+  data: unknown,
+): data is LoadAttachmentCommand {
+  return (
+    isMPRCCommand(data) &&
+    data.command === "LOAD_ATTACHMENT" &&
+    "contentHash" in data &&
+    typeof (data as LoadAttachmentCommand).contentHash === "string"
   );
 }
 
@@ -711,5 +745,21 @@ export function createListMessagesCommand(
     requestId: createRequestId(),
     email,
     ...options,
+  };
+}
+
+/**
+ * Creates a LOAD_ATTACHMENT command.
+ *
+ * @param contentHash - The content hash of the attachment to load
+ * @returns A new LoadAttachmentCommand
+ */
+export function createLoadAttachmentCommand(
+  contentHash: string,
+): LoadAttachmentCommand {
+  return {
+    command: "LOAD_ATTACHMENT",
+    requestId: createRequestId(),
+    contentHash,
   };
 }

@@ -339,6 +339,17 @@ export interface ReadMessageCommandResponse extends BaseMPRCResponse {
     found: boolean;
 }
 /**
+ * Command to load attachment for message
+ *
+ */
+export interface LoadAttachmentCommand extends BaseMPRCCommand {
+    command: "LOAD_ATTACHMENT";
+    /** Content hash of the attachment to load */
+    contentHash: string;
+}
+export interface LoadAttachmentCommandResponse extends BaseMPRCResponse, MessageAttachment {
+}
+/**
  * Command to delete a message.
  * @future This command is planned for future implementation.
  */
@@ -360,7 +371,7 @@ export interface DeleteMessageCommandResponse extends BaseMPRCResponse {
 /**
  * All valid MPRC command names.
  */
-export declare const MPRC_COMMAND_NAMES: readonly ["VERIFY", "FIND_USER", "SEND_MESSAGE", "LIST_MESSAGES", "READ_MESSAGE"];
+export declare const MPRC_COMMAND_NAMES: readonly ["VERIFY", "FIND_USER", "SEND_MESSAGE", "LIST_MESSAGES", "READ_MESSAGE", "LOAD_ATTACHMENT"];
 /**
  * Type representing any valid MPRC command name.
  */
@@ -369,12 +380,12 @@ export type MPRCCommandName = (typeof MPRC_COMMAND_NAMES)[number];
  * Union type of all possible MPRC commands.
  * Add new command types here as they are implemented.
  */
-export type MPRCCommand = VerifyProtocolCommand | FindUserCommand | SendMessageCommand | ListMessagesCommand | ReadMessageCommand;
+export type MPRCCommand = VerifyProtocolCommand | FindUserCommand | SendMessageCommand | ListMessagesCommand | ReadMessageCommand | LoadAttachmentCommand;
 /**
  * Union type of all possible MPRC command responses.
  * Add new response types here as they are implemented.
  */
-export type MPRCCommandResponse = VerifyProtocolCommandResponse | FindUserCommandResponse | SendMessageCommandResponse | MPRCErrorResponse | ListMessagesCommandResponse | ReadMessageCommandResponse;
+export type MPRCCommandResponse = VerifyProtocolCommandResponse | FindUserCommandResponse | SendMessageCommandResponse | MPRCErrorResponse | ListMessagesCommandResponse | ReadMessageCommandResponse | LoadAttachmentCommandResponse;
 /**
  * Checks if the given data is a valid MPRC command.
  *
@@ -420,6 +431,13 @@ export declare function isSendMessageCommand(data: unknown): data is SendMessage
  *
  */
 export declare function isListMessagesCommand(data: unknown): data is ListMessagesCommand;
+/**
+ * Checks if the given data is a LOAD_ATTACHMENT command.
+ *
+ * @param data - The data to check
+ * @returns True if the data is a LoadAttachmentCommand
+ */
+export declare function isLoadAttachmentCommand(data: unknown): data is LoadAttachmentCommand;
 /**
  * Checks if the given data is a READ_MESSAGE command.
  *
@@ -493,4 +511,11 @@ export declare function createListMessagesCommand(email: string, options?: {
     since?: Date;
     unreadOnly?: boolean;
 }): ListMessagesCommand;
+/**
+ * Creates a LOAD_ATTACHMENT command.
+ *
+ * @param contentHash - The content hash of the attachment to load
+ * @returns A new LoadAttachmentCommand
+ */
+export declare function createLoadAttachmentCommand(contentHash: string): LoadAttachmentCommand;
 //# sourceMappingURL=types.d.ts.map

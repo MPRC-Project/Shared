@@ -25,6 +25,7 @@ export const MPRC_COMMAND_NAMES = [
     "SEND_MESSAGE",
     "LIST_MESSAGES",
     "READ_MESSAGE",
+    "LOAD_ATTACHMENT",
     // Future commands (uncomment when implemented):
     // "DELETE_MESSAGE",
 ];
@@ -102,6 +103,18 @@ export function isListMessagesCommand(data) {
         data.command === "LIST_MESSAGES" &&
         "email" in data &&
         typeof data.email === "string");
+}
+/**
+ * Checks if the given data is a LOAD_ATTACHMENT command.
+ *
+ * @param data - The data to check
+ * @returns True if the data is a LoadAttachmentCommand
+ */
+export function isLoadAttachmentCommand(data) {
+    return (isMPRCCommand(data) &&
+        data.command === "LOAD_ATTACHMENT" &&
+        "contentHash" in data &&
+        typeof data.contentHash === "string");
 }
 /**
  * Checks if the given data is a READ_MESSAGE command.
@@ -224,6 +237,19 @@ export function createListMessagesCommand(email, options) {
         requestId: createRequestId(),
         email,
         ...options,
+    };
+}
+/**
+ * Creates a LOAD_ATTACHMENT command.
+ *
+ * @param contentHash - The content hash of the attachment to load
+ * @returns A new LoadAttachmentCommand
+ */
+export function createLoadAttachmentCommand(contentHash) {
+    return {
+        command: "LOAD_ATTACHMENT",
+        requestId: createRequestId(),
+        contentHash,
     };
 }
 //# sourceMappingURL=types.js.map
