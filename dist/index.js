@@ -39,6 +39,6 @@ export { MPRCConnection, extractDomainFromEmail, resolveDomain, resolveEmailToSe
 // ============================================================================
 // Implementations
 // ============================================================================
-export { FilesystemAttachmentStorage, createDefaultAttachmentStorage, } from "./implementations/attachment/memory.js";
+export { FilesystemAttachmentStorage, createDefaultAttachmentStorage, } from "./implementations/attachment/filesystem.js";
 export { InMemoryDatabase, createDefaultDatabase, } from "./implementations/mail-database/memory.js";
 //# sourceMappingURL=index.js.map

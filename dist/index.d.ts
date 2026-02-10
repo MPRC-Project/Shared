@@ -35,9 +35,11 @@ export { MPRC_COMMAND_NAMES, isMPRCCommand, isVerifyCommand, isFindUserCommand, 
 export { MPRCError, NetworkError, DnsResolutionError, ConnectionError, TimeoutError, InvalidJsonError, InvalidCommandError, UnknownCommandError, ProtocolVerificationError, InvalidEmailError, UserNotFoundError, SenderVerificationError, MessageDeliveryError, AttachmentNotFoundError, } from "./protocol/index.js";
 export type { MessageToHTMLOptions } from "./protocol/index.js";
 export { messageBodyToHTML, messageBodyToHTMLDocument, messageToHTML, } from "./protocol/index.js";
+export type { IMPRCDatabase, ListMessagesOptions, PaginatedResult, } from "./protocol/mail-database.js";
+export type { StoredAttachmentMetadata, IAttachmentStorage, } from "./protocol/attachment.js";
 export type { DnsResolutionResult, ConnectionOptions, SendCommandOptions, } from "./network/index.js";
 export { MPRCConnection, extractDomainFromEmail, resolveDomain, resolveEmailToServerAddress, sendSingleCommand, } from "./network/index.js";
-export { FilesystemAttachmentStorage, createDefaultAttachmentStorage, } from "./implementations/attachment/memory.js";
-export type { FilesystemStorageOptions } from "./implementations/attachment/memory.js";
+export { FilesystemAttachmentStorage, createDefaultAttachmentStorage, } from "./implementations/attachment/filesystem.js";
+export type { FilesystemStorageOptions } from "./implementations/attachment/filesystem.js";
 export { InMemoryDatabase, createDefaultDatabase, } from "./implementations/mail-database/memory.js";
 //# sourceMappingURL=index.d.ts.map

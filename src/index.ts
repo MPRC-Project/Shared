@@ -189,6 +189,19 @@ export {
   messageToHTML,
 } from "./protocol/index.js";
 
+// Mail database types
+export type {
+  IMPRCDatabase,
+  ListMessagesOptions,
+  PaginatedResult,
+} from "./protocol/mail-database.js";
+
+// Attachment types
+export type {
+  StoredAttachmentMetadata,
+  IAttachmentStorage,
+} from "./protocol/attachment.js";
+
 // ============================================================================
 // Network Utilities
 // ============================================================================
@@ -214,8 +227,8 @@ export {
 export {
   FilesystemAttachmentStorage,
   createDefaultAttachmentStorage,
-} from "./implementations/attachment/memory.js";
-export type { FilesystemStorageOptions } from "./implementations/attachment/memory.js";
+} from "./implementations/attachment/filesystem.js";
+export type { FilesystemStorageOptions } from "./implementations/attachment/filesystem.js";
 
 export {
   InMemoryDatabase,

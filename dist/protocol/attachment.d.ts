@@ -5,7 +5,6 @@
  * Implementations can use different storage backends (filesystem, S3, etc.)
  * while maintaining a consistent API.
  *
- * @module @mprc/server/attachments
  */
 import type { MessageAttachment } from "./types.js";
 /**
