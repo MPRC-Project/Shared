@@ -9,7 +9,7 @@
  *
  * @module @mprc/server/attachments
  */
-import type { IAttachmentStorage, StoredAttachmentMetadata } from "../../protocol/attachment.js";
+import type { IAttachmentStorage, AttachmentMetadata } from "../../protocol/attachment.js";
 import type { MessageAttachment } from "../../protocol/types.js";
 /**
  * Configuration options for filesystem storage.
@@ -116,7 +116,7 @@ export declare class FilesystemAttachmentStorage implements IAttachmentStorage {
      * @returns Metadata about the stored attachment
      * @throws {Error} If file write fails
      */
-    storeAttachment(attachment: MessageAttachment): Promise<StoredAttachmentMetadata>;
+    storeAttachment(attachment: MessageAttachment): Promise<AttachmentMetadata>;
     /**
      * Retrieves an attachment by its content hash.
      *
@@ -130,7 +130,7 @@ export declare class FilesystemAttachmentStorage implements IAttachmentStorage {
      * @returns The attachment with blob content
      * @throws {Error} If file not found or read fails
      */
-    retrieveAttachment(metadata: StoredAttachmentMetadata): Promise<MessageAttachment>;
+    retrieveAttachment(metadata: AttachmentMetadata): Promise<MessageAttachment>;
     /**
      * Deletes an attachment from storage.
      *

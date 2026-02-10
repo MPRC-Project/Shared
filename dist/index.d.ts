@@ -36,7 +36,7 @@ export { MPRCError, NetworkError, DnsResolutionError, ConnectionError, TimeoutEr
 export type { MessageToHTMLOptions } from "./protocol/index.js";
 export { messageBodyToHTML, messageBodyToHTMLDocument, messageToHTML, } from "./protocol/index.js";
 export type { IMPRCDatabase, ListMessagesOptions, PaginatedResult, } from "./protocol/mail-database.js";
-export type { StoredAttachmentMetadata, IAttachmentStorage, } from "./protocol/attachment.js";
+export type { AttachmentMetadata, IAttachmentStorage, } from "./protocol/attachment.js";
 export type { DnsResolutionResult, ConnectionOptions, SendCommandOptions, } from "./network/index.js";
 export { MPRCConnection, extractDomainFromEmail, resolveDomain, resolveEmailToServerAddress, sendSingleCommand, } from "./network/index.js";
 export { FilesystemAttachmentStorage, createDefaultAttachmentStorage, } from "./implementations/attachment/filesystem.js";

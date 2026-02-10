@@ -13,6 +13,7 @@
  * @module protocol/types
  */
 
+import type { AttachmentMetadata } from "./attachment.js";
 import type { MessageBody } from "./message-body.js";
 
 // Re-export message body types for convenience
@@ -396,8 +397,8 @@ export interface ReadMessageCommandResponse extends BaseMPRCResponse {
 
 export interface LoadAttachmentCommand extends BaseMPRCCommand {
   command: "LOAD_ATTACHMENT";
-  /** Content hash of the attachment to load */
-  contentHash: string;
+  /** Metadata of the attachment to load */
+  attachmentMetadata: AttachmentMetadata;
 }
 
 export interface LoadAttachmentCommandResponse
@@ -586,8 +587,8 @@ export function isLoadAttachmentCommand(
   return (
     isMPRCCommand(data) &&
     data.command === "LOAD_ATTACHMENT" &&
-    "contentHash" in data &&
-    typeof (data as LoadAttachmentCommand).contentHash === "string"
+    "attachmentMetadata" in data &&
+    typeof (data as LoadAttachmentCommand).attachmentMetadata === "object"
   );
 }
 
@@ -755,11 +756,11 @@ export function createListMessagesCommand(
  * @returns A new LoadAttachmentCommand
  */
 export function createLoadAttachmentCommand(
-  contentHash: string,
+  attachmentMetadata: AttachmentMetadata,
 ): LoadAttachmentCommand {
   return {
     command: "LOAD_ATTACHMENT",
     requestId: createRequestId(),
-    contentHash,
+    attachmentMetadata,
   };
 }

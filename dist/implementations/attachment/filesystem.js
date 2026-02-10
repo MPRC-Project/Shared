@@ -166,7 +166,6 @@ export class FilesystemAttachmentStorage {
             contentHash,
             size,
             mimeType: attachment.mimeType ?? "application/octet-stream",
-            storedAt: new Date(),
         };
     }
     /**

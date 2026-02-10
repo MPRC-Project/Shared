@@ -113,8 +113,8 @@ export function isListMessagesCommand(data) {
 export function isLoadAttachmentCommand(data) {
     return (isMPRCCommand(data) &&
         data.command === "LOAD_ATTACHMENT" &&
-        "contentHash" in data &&
-        typeof data.contentHash === "string");
+        "attachmentMetadata" in data &&
+        typeof data.attachmentMetadata === "object");
 }
 /**
  * Checks if the given data is a READ_MESSAGE command.
@@ -245,11 +245,11 @@ export function createListMessagesCommand(email, options) {
  * @param contentHash - The content hash of the attachment to load
  * @returns A new LoadAttachmentCommand
  */
-export function createLoadAttachmentCommand(contentHash) {
+export function createLoadAttachmentCommand(attachmentMetadata) {
     return {
         command: "LOAD_ATTACHMENT",
         requestId: createRequestId(),
-        contentHash,
+        attachmentMetadata,
     };
 }
 //# sourceMappingURL=types.js.map

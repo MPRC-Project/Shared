@@ -11,7 +11,7 @@ import type { MessageAttachment } from "./types.js";
  * Metadata about a stored attachment.
  * This information is stored in the database alongside the message.
  */
-export interface StoredAttachmentMetadata {
+export interface AttachmentMetadata {
     /** Unique identifier for this attachment */
     id: string;
     /** Original filename provided by the sender */
@@ -22,8 +22,6 @@ export interface StoredAttachmentMetadata {
     size: number;
     /** MIME type of the attachment (reserved for future use) */
     mimeType?: string;
-    /** Timestamp when the attachment was stored */
-    storedAt: Date;
 }
 /**
  * Abstract interface for attachment storage operations.
@@ -72,7 +70,7 @@ export interface IAttachmentStorage {
      * @returns Metadata about the stored attachment
      * @throws {Error} If storage operation fails
      */
-    storeAttachment(attachment: MessageAttachment): Promise<StoredAttachmentMetadata>;
+    storeAttachment(attachment: MessageAttachment): Promise<AttachmentMetadata>;
     /**
      * Retrieves an attachment by its content hash.
      *
@@ -86,7 +84,7 @@ export interface IAttachmentStorage {
      * @returns The attachment with its blob content
      * @throws {Error} If attachment not found or read fails
      */
-    retrieveAttachment(metadata: StoredAttachmentMetadata): Promise<MessageAttachment>;
+    retrieveAttachment(metadata: AttachmentMetadata): Promise<MessageAttachment>;
     /**
      * Checks if an attachment with the given hash exists in storage.
      *

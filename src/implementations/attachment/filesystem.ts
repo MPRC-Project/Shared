@@ -15,7 +15,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import type {
   IAttachmentStorage,
-  StoredAttachmentMetadata,
+  AttachmentMetadata,
 } from "../../protocol/attachment.js";
 import type { MessageAttachment } from "../../protocol/types.js";
 
@@ -180,7 +180,7 @@ export class FilesystemAttachmentStorage implements IAttachmentStorage {
    */
   async storeAttachment(
     attachment: MessageAttachment,
-  ): Promise<StoredAttachmentMetadata> {
+  ): Promise<AttachmentMetadata> {
     // Calculate content hash
     const contentHash = this.calculateHash(attachment.content);
     const filepath = this.getAttachmentPath(contentHash);
@@ -207,7 +207,6 @@ export class FilesystemAttachmentStorage implements IAttachmentStorage {
       contentHash,
       size,
       mimeType: attachment.mimeType ?? "application/octet-stream",
-      storedAt: new Date(),
     };
   }
 
@@ -225,7 +224,7 @@ export class FilesystemAttachmentStorage implements IAttachmentStorage {
    * @throws {Error} If file not found or read fails
    */
   async retrieveAttachment(
-    metadata: StoredAttachmentMetadata,
+    metadata: AttachmentMetadata,
   ): Promise<MessageAttachment> {
     const filepath = this.getAttachmentPath(metadata.contentHash);
 

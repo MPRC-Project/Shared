@@ -9,7 +9,7 @@
  */
 
 import type { Message, User } from "./types.js";
-import type { StoredAttachmentMetadata } from "./attachment.js";
+import type { AttachmentMetadata } from "./attachment.js";
 
 /**
  * Result of a paginated query.

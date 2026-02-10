@@ -89,10 +89,7 @@ export type {
 } from "./mail-database.js";
 
 // Attachment types
-export type {
-  StoredAttachmentMetadata,
-  IAttachmentStorage,
-} from "./attachment.js";
+export type { AttachmentMetadata, IAttachmentStorage } from "./attachment.js";
 
 // Types
 export type {

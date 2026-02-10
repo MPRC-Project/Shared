@@ -17,7 +17,7 @@ import type {
 } from "../../protocol/mail-database.js";
 import type {
   IAttachmentStorage,
-  StoredAttachmentMetadata,
+  AttachmentMetadata,
 } from "../../protocol/attachment.js";
 /**
  * In-memory database implementation for the MPRC server.
@@ -59,8 +59,7 @@ export class InMemoryDatabase implements IMPRCDatabase {
   /** Track read status of messages */
   private readStatus: Map<string, boolean> = new Map();
   /** Map of message ID to attachment metadata arrays */
-  private attachmentMetadata: Map<string, StoredAttachmentMetadata[]> =
-    new Map();
+  private attachmentMetadata: Map<string, AttachmentMetadata[]> = new Map();
 
   /** Reference to the attachment storage system */
   private attachmentStorage?: IAttachmentStorage;
@@ -243,7 +242,7 @@ export class InMemoryDatabase implements IMPRCDatabase {
         );
       }
 
-      const metadataArray: StoredAttachmentMetadata[] = [];
+      const metadataArray: AttachmentMetadata[] = [];
 
       for (const attachment of message.attachments) {
         if (!attachment.content) {

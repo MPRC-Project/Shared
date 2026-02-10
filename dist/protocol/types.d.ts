@@ -12,6 +12,7 @@
  *
  * @module protocol/types
  */
+import type { AttachmentMetadata } from "./attachment.js";
 import type { MessageBody } from "./message-body.js";
 export type { MessageBody, MessageBodyElement } from "./message-body.js";
 export { isTextElement, isBreakElement, isImageElement, isLinkElement, isListElement, isDivElement, isValidMessageBody, } from "./message-body.js";
@@ -344,8 +345,8 @@ export interface ReadMessageCommandResponse extends BaseMPRCResponse {
  */
 export interface LoadAttachmentCommand extends BaseMPRCCommand {
     command: "LOAD_ATTACHMENT";
-    /** Content hash of the attachment to load */
-    contentHash: string;
+    /** Metadata of the attachment to load */
+    attachmentMetadata: AttachmentMetadata;
 }
 export interface LoadAttachmentCommandResponse extends BaseMPRCResponse, MessageAttachment {
 }
@@ -517,5 +518,5 @@ export declare function createListMessagesCommand(email: string, options?: {
  * @param contentHash - The content hash of the attachment to load
  * @returns A new LoadAttachmentCommand
  */
-export declare function createLoadAttachmentCommand(contentHash: string): LoadAttachmentCommand;
+export declare function createLoadAttachmentCommand(attachmentMetadata: AttachmentMetadata): LoadAttachmentCommand;
 //# sourceMappingURL=types.d.ts.map

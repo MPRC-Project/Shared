@@ -198,7 +198,7 @@ export type {
 
 // Attachment types
 export type {
-  StoredAttachmentMetadata,
+  AttachmentMetadata,
   IAttachmentStorage,
 } from "./protocol/attachment.js";
 
