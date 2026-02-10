@@ -10,6 +10,6 @@ export { isTextElement, isBreakElement, isImageElement, isLinkElement, isListEle
 // Type guards and utilities
 export { MPRC_COMMAND_NAMES, isMPRCCommand, isVerifyCommand, isFindUserCommand, isSendMessageCommand, isValidMessage, isErrorResponse, isLoadAttachmentCommand, createRequestId, createVerifyCommand, createFindUserCommand, createSendMessageCommand, createListMessagesCommand, createReadMessageCommand, createLoadAttachmentCommand, } from "./types.js";
 // Errors
-export { MPRCError, NetworkError, DnsResolutionError, ConnectionError, TimeoutError, InvalidJsonError, InvalidCommandError, UnknownCommandError, ProtocolVerificationError, InvalidEmailError, UserNotFoundError, MessageNotFoundError, SenderVerificationError, MessageDeliveryError, } from "./errors.js";
+export { MPRCError, NetworkError, DnsResolutionError, ConnectionError, TimeoutError, InvalidJsonError, InvalidCommandError, UnknownCommandError, ProtocolVerificationError, InvalidEmailError, UserNotFoundError, MessageNotFoundError, SenderVerificationError, AttachmentNotFoundError, MessageDeliveryError, } from "./errors.js";
 export { messageBodyToHTML, messageBodyToHTMLDocument, messageToHTML, } from "./html-renderer.js";
 //# sourceMappingURL=index.js.map

@@ -299,6 +299,18 @@ export class MessageNotFoundError extends MPRCError {
   }
 }
 
+export class AttachmentNotFoundError extends MPRCError {
+  readonly code = "ATTACHMENT_NOT_FOUND";
+  readonly statusCode = 404;
+  /** The content hash of the attachment that was not found */
+  readonly contentHash: string;
+
+  constructor(contentHash: string) {
+    super(`Attachment not found: ${contentHash}`);
+    this.contentHash = contentHash;
+  }
+}
+
 /**
  * Error thrown when a message cannot be delivered.
  */

@@ -155,6 +155,13 @@ export declare class MessageNotFoundError extends MPRCError {
     readonly messageId: string;
     constructor(messageId: string);
 }
+export declare class AttachmentNotFoundError extends MPRCError {
+    readonly code = "ATTACHMENT_NOT_FOUND";
+    readonly statusCode = 404;
+    /** The content hash of the attachment that was not found */
+    readonly contentHash: string;
+    constructor(contentHash: string);
+}
 /**
  * Error thrown when a message cannot be delivered.
  */

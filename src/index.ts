@@ -177,6 +177,7 @@ export {
   UserNotFoundError,
   SenderVerificationError,
   MessageDeliveryError,
+  AttachmentNotFoundError,
 } from "./protocol/index.js";
 
 // HTML Rendering

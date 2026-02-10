@@ -142,6 +142,7 @@ export {
   UserNotFoundError,
   MessageNotFoundError,
   SenderVerificationError,
+  AttachmentNotFoundError,
   MessageDeliveryError,
 } from "./errors.js";
 
