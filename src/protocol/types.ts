@@ -373,7 +373,7 @@ export interface ReadMessageCommand extends BaseMPRCCommand {
  */
 export interface ReadMessageCommandResponse extends BaseMPRCResponse {
   /** The full message content */
-  message: Message;
+  message: StoredMessage;
   /** Whether the message was found */
   found: boolean;
 }
