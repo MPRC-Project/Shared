@@ -98,8 +98,8 @@ export interface FindUserCommand extends BaseMPRCCommand {
 export interface FindUserCommandResponse extends BaseMPRCResponse {
   /** Whether the user was found */
   found: boolean;
-  /** Optional user display name if found and public */
-  displayName?: string | undefined;
+  /** Optional username if found and public */
+  username?: string | undefined;
 }
 
 // ============================================================================
