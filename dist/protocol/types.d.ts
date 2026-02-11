@@ -460,6 +460,13 @@ export declare function isValidMessage(data: unknown): data is Message;
  */
 export declare function isAttachmentMetadataArray(arr: unknown): arr is AttachmentMetadata[];
 /**
+ * Checks if the given data is AttachmentMetadata object
+ *
+ * @param data - The data to check
+ * @returns True if the data is an AttachmentMetadata object
+ */
+export declare function isAttachmentMetadata(data: unknown): data is AttachmentMetadata;
+/**
  * Checks if the given data is an MPRC error response.
  *
  * @param data - The data to check

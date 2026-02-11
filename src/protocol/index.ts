@@ -131,6 +131,7 @@ export {
   isValidMessage,
   isErrorResponse,
   isLoadAttachmentCommand,
+  isAttachmentMetadata,
   createRequestId,
   createVerifyCommand,
   createFindUserCommand,

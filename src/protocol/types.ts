@@ -621,31 +621,25 @@ export function isValidMessage(data: unknown): data is Message {
 }
 
 /**
- * Check if the given data is an array of AttachmentMetadata objects.
+ * Checks if the given data is AttachmentMetadata object
  *
  * @param data - The data to check
- * @returns True if the data is an array of AttachmentMetadata
- * @example
- * ```typescript
- * const data = JSON.parse(receivedData);
- * if (isAttachmentMetadataArray(data)) {
- *  // data is now typed as AttachmentMetadata[]
- *  console.log(data[0].contentHash);
- * }
- *
+ * @returns True if the data is an AttachmentMetadata object
  */
 
-export function isAttachmentMetadataArray(
-  arr: unknown,
-): arr is AttachmentMetadata[] {
+export function isAttachmentMetadata(
+  data: unknown,
+): data is AttachmentMetadata {
   return (
-    Array.isArray(arr) &&
-    arr.every(
-      (item) =>
-        typeof item === "object" && item !== null && "contentHash" in item,
-    )
+    typeof data === "object" &&
+    data !== null &&
+    "contentHash" in data &&
+    "id" in data &&
+    "filename" in data &&
+    typeof (data as AttachmentMetadata).contentHash === "string"
   );
 }
+
 /**
  * Checks if the given data is an MPRC error response.
  *

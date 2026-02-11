@@ -164,6 +164,20 @@ export function isAttachmentMetadataArray(arr) {
         arr.every((item) => typeof item === "object" && item !== null && "contentHash" in item));
 }
 /**
+ * Checks if the given data is AttachmentMetadata object
+ *
+ * @param data - The data to check
+ * @returns True if the data is an AttachmentMetadata object
+ */
+export function isAttachmentMetadata(data) {
+    return (typeof data === "object" &&
+        data !== null &&
+        "contentHash" in data &&
+        "id" in data &&
+        "filename" in data &&
+        typeof data.contentHash === "string");
+}
+/**
  * Checks if the given data is an MPRC error response.
  *
  * @param data - The data to check
