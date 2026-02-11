@@ -4,7 +4,7 @@
  * Shared networking functionality for DNS resolution and TCP communication.
  * Used by both client and server components to eliminate code duplication.
  */
-import type { MPRCCommand, MPRCCommandResponse } from "../protocol/types.js";
+import type { MPRCCommand, MPRCCommandResponse } from "../index.js";
 /**
  * Result of a DNS resolution operation.
  */

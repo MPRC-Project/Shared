@@ -1,0 +1,366 @@
+import type {
+  AttachmentMetadata,
+  Message,
+  MessageAttachment,
+  StoredMessage,
+} from "../message/index.js";
+
+/**
+ * Base interface for all MPRC commands.
+ * All commands must include a unique request ID for request-response matching.
+ */
+export interface BaseMPRCCommand {
+  /** The command type identifier */
+  command: string;
+  /** Unique request identifier for matching responses (UUID recommended) */
+  requestId: string;
+}
+
+/**
+ * Base interface for all MPRC responses.
+ * All responses include the original request ID for matching.
+ */
+export interface BaseMPRCResponse {
+  /** The request ID this response corresponds to */
+  responseId: string;
+}
+
+/**
+ * Error response returned when a command fails.
+ */
+export interface MPRCErrorResponse extends BaseMPRCResponse {
+  /** Error code for programmatic handling */
+  error: string;
+  /** Human-readable error message */
+  message: string;
+  /** Optional additional error details */
+  details?: Record<string, unknown>;
+}
+
+// ============================================================================
+// VERIFY Command - Protocol Handshake
+// ============================================================================
+
+/**
+ * Command to verify that a server supports the MPRC protocol.
+ * Should be the first command sent when establishing a connection.
+ *
+ * @example
+ * ```typescript
+ * const command: VerifyProtocolCommand = {
+ *   command: "VERIFY",
+ *   requestId: crypto.randomUUID(),
+ * };
+ * ```
+ */
+export interface VerifyProtocolCommand extends BaseMPRCCommand {
+  command: "VERIFY";
+}
+
+/**
+ * Response to the VERIFY command.
+ * Contains protocol identification and version information.
+ */
+export interface VerifyProtocolCommandResponse extends BaseMPRCResponse {
+  /** Protocol identifier - always "MPRC" for valid servers */
+  status: "MPRC";
+  /** Server's protocol version */
+  version: string;
+  /** Optional server capabilities for future extensibility */
+  capabilities?: string[];
+}
+
+// ============================================================================
+// FIND_USER Command - User Lookup
+// ============================================================================
+
+/**
+ * Command to check if a user exists on the server.
+ *
+ * @example
+ * ```typescript
+ * const command: FindUserCommand = {
+ *   command: "FIND_USER",
+ *   requestId: crypto.randomUUID(),
+ *   email: "user@example.com",
+ * };
+ * ```
+ */
+export interface FindUserCommand extends BaseMPRCCommand {
+  command: "FIND_USER";
+  /** Email address to look up */
+  email: string;
+}
+
+/**
+ * Response to the FIND_USER command.
+ */
+export interface FindUserCommandResponse extends BaseMPRCResponse {
+  /** Whether the user was found */
+  found: boolean;
+  /** Optional user display name if found and public */
+  displayName?: string | undefined;
+}
+
+// ============================================================================
+// SEND_MESSAGE Command - Message Delivery
+// ============================================================================
+
+/**
+ * Command to send a message to a recipient.
+ *
+ * @example
+ * ```typescript
+ * const command: SendMessageCommand = {
+ *   command: "SEND_MESSAGE",
+ *   requestId: crypto.randomUUID(),
+ *   message: {
+ *     id: crypto.randomUUID(),
+ *     from: "sender@example.com",
+ *     to: "recipient@example.com",
+ *     subject: "Hello",
+ *     body: "Message content",
+ *   },
+ * };
+ * ```
+ */
+export interface SendMessageCommand extends BaseMPRCCommand {
+  command: "SEND_MESSAGE";
+  /** The message to send */
+  message: Message;
+}
+
+/**
+ * Response to the SEND_MESSAGE command.
+ */
+export interface SendMessageCommandResponse extends BaseMPRCResponse {
+  /** Whether the message was accepted for delivery */
+  success: boolean;
+  /** Optional message ID assigned by the receiving server */
+  assignedId?: string | undefined;
+  /** Optional delivery timestamp */
+  deliveredAt?: Date | undefined;
+}
+
+/**
+ * Command to list messages in a mailbox.
+ *
+ * This command retrieves a paginated list of message summaries from the user's
+ * mailbox. Supports filtering by folder, tags, date range, and read status.
+ *
+ * @example
+ * ```typescript
+ * // List all messages in inbox (first page)
+ * const command: ListMessagesCommand = {
+ *   command: "LIST_MESSAGES",
+ *   requestId: crypto.randomUUID(),
+ *   email: "user@example.com",
+ *   folder: "inbox",
+ *   limit: 20,
+ *   offset: 0,
+ * };
+ * ```
+ */
+export interface ListMessagesCommand extends BaseMPRCCommand {
+  command: "LIST_MESSAGES";
+  /**
+   * Email address of the user whose messages to list.
+   * This identifies the mailbox to query.
+   */
+  email: string;
+  /**
+   * Filter by folder/mailbox name.
+   * Common values: "inbox", "sent", "drafts", "trash", "spam".
+   * If omitted, returns messages from all folders.
+   */
+  folder?: string;
+  /**
+   * Filter by message tags.
+   * Returns only messages that have ALL specified tags.
+   * If omitted, no tag filtering is applied.
+   */
+  tags?: string[];
+  /**
+   * Maximum number of messages to return.
+   * Used for pagination. Server may impose a maximum limit.
+   * @default 50
+   */
+  limit?: number;
+  /**
+   * Offset for pagination.
+   * Number of messages to skip before returning results.
+   * Use with `limit` for paginated access.
+   * @default 0
+   */
+  offset?: number;
+  /**
+   * Filter: only messages received after this date.
+   * Useful for syncing or fetching recent messages.
+   */
+  since?: Date;
+  /**
+   * Filter: only unread messages.
+   * When true, returns only messages that have not been marked as read.
+   * @default false
+   */
+  unreadOnly?: boolean;
+}
+
+/**
+ * Response to the LIST_MESSAGES command.
+ *
+ * Contains a paginated array of message summaries along with
+ * pagination metadata.
+ */
+export interface ListMessagesCommandResponse extends BaseMPRCResponse {
+  /**
+   * Array of message summaries.
+   * Contains lightweight message data suitable for listing.
+   * Use READ_MESSAGE command to fetch full message content.
+   */
+  messages: Array<{
+    /** Unique message identifier */
+    id: string;
+    /** Sender's email address */
+    from: string;
+    /** Message subject line */
+    subject: string;
+    /** Timestamp when the message was received */
+    receivedAt: Date;
+    /** Whether the message has been read */
+    read: boolean;
+  }>;
+  /**
+   * Total number of messages matching the query.
+   * This is the total count before pagination is applied.
+   */
+  total: number;
+  /**
+   * Whether there are more messages available.
+   * When true, increment `offset` by `limit` to fetch the next page.
+   */
+  hasMore: boolean;
+}
+
+/**
+ * Command to read specific message from a mailbox.
+ *
+ * This command retrieves a full message by its ID, optionally marking it as read.
+ *
+ * @example
+ * ```typescript
+ * // Read a specific message by ID
+ * const command: ReadMessageCommand = {
+ *   command: "READ_MESSAGE",
+ *   requestId: crypto.randomUUID(),
+ *   messageId: "12345",
+ *   markAsRead: true,
+ * ```
+ */
+export interface ReadMessageCommand extends BaseMPRCCommand {
+  command: "READ_MESSAGE";
+  /** ID of the message to read */
+  messageId: string;
+  /** Whether to mark the message as read */
+  markAsRead?: boolean;
+}
+
+/**
+ * Response to the READ_MESSAGE command.
+ * Contains the full message content.
+ */
+export interface ReadMessageCommandResponse extends BaseMPRCResponse {
+  /** The full message content */
+  message: StoredMessage;
+  /** Whether the message was found */
+  found: boolean;
+}
+
+/**
+ * Command to load attachment for message
+ *
+ */
+
+export interface LoadAttachmentCommand extends BaseMPRCCommand {
+  command: "LOAD_ATTACHMENT";
+  /** Metadata of the attachment to load */
+  attachmentMetadata: AttachmentMetadata;
+}
+
+export interface LoadAttachmentCommandResponse extends BaseMPRCResponse {
+  attachment: MessageAttachment;
+}
+
+// ============================================================================
+// Future Commands (Prepared Interfaces)
+// ============================================================================
+
+/**
+ * Command to delete a message.
+ * @future This command is planned for future implementation.
+ */
+export interface DeleteMessageCommand extends BaseMPRCCommand {
+  command: "DELETE_MESSAGE";
+  /** ID of the message to delete */
+  messageId: string;
+  /** Whether to permanently delete or move to trash */
+  permanent?: boolean;
+}
+
+/**
+ * Response to the DELETE_MESSAGE command.
+ * @future This response type is planned for future implementation.
+ */
+export interface DeleteMessageCommandResponse extends BaseMPRCResponse {
+  /** Whether the deletion was successful */
+  success: boolean;
+}
+
+// ============================================================================
+// Union Types
+// ============================================================================
+
+/**
+ * All valid MPRC command names.
+ */
+export const MPRC_COMMAND_NAMES = [
+  "VERIFY",
+  "FIND_USER",
+  "SEND_MESSAGE",
+  "LIST_MESSAGES",
+  "READ_MESSAGE",
+  "LOAD_ATTACHMENT",
+  // "DELETE_MESSAGE",
+] as const;
+
+/**
+ * Type representing any valid MPRC command name.
+ */
+export type MPRCCommandName = (typeof MPRC_COMMAND_NAMES)[number];
+
+/**
+ * Union type of all possible MPRC commands.
+ * Add new command types here as they are implemented.
+ */
+export type MPRCCommand =
+  | VerifyProtocolCommand
+  | FindUserCommand
+  | SendMessageCommand
+  | ListMessagesCommand
+  | ReadMessageCommand
+  | LoadAttachmentCommand;
+// | DeleteMessageCommand;
+
+/**
+ * Union type of all possible MPRC command responses.
+ * Add new response types here as they are implemented.
+ */
+export type MPRCCommandResponse =
+  | VerifyProtocolCommandResponse
+  | FindUserCommandResponse
+  | SendMessageCommandResponse
+  | MPRCErrorResponse
+  | ListMessagesCommandResponse
+  | ReadMessageCommandResponse
+  | LoadAttachmentCommandResponse;
+// | DeleteMessageCommandResponse;

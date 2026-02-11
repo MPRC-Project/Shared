@@ -9,7 +9,7 @@ import net from "node:net";
 import dns from "node:dns";
 import { promisify } from "node:util";
 
-import type { MPRCCommand, MPRCCommandResponse } from "../protocol/types.js";
+import type { MPRCCommand, MPRCCommandResponse } from "../index.js";
 import {
   MPRC_PORT,
   DEFAULT_TIMEOUT_MS,

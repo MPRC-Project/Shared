@@ -8,8 +8,7 @@
  * @module @mprc/server/database
  */
 
-import type { Message, StoredMessage, User } from "./types.js";
-import type { AttachmentMetadata } from "./attachment.js";
+import type { Message, StoredMessage, User } from "../index.js";
 
 /**
  * Result of a paginated query.

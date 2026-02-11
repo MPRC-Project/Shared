@@ -6,140 +6,20 @@
  * @module protocol
  */
 
-// Style Types
-export type {
-  SizeUnit,
-  SizeValue,
-  ColorValue,
-  SpacingValue,
-  SpacingIndividual,
-  SpacingShorthand,
-  BorderRadiusValue,
-  BorderRadiusIndividual,
-  UnorderedListStyleType,
-  OrderedListStyleType,
-  ListStyleType,
-  ListStylePosition,
-  ListStyle,
-  ElementStyle,
-  BlockElementStyle,
-  ListElementStyle,
-  ImageElementStyle,
-} from "./styles.js";
+export * from "./message/index.js";
 
-export {
-  sizeToCSS,
-  spacingToCSS,
-  borderRadiusToCSS,
-  elementStyleToCSS,
-  blockStyleToCSS,
-  listStyleToCSS,
-} from "./styles.js";
+export * from "./storage/index.js";
 
-// Message Body Types
-export type {
-  MessageBodyTag,
-  TextTag,
-  BaseElement,
-  TextElement,
-  H1Element,
-  H2Element,
-  H3Element,
-  ParagraphElement,
-  BoldElement,
-  ItalicElement,
-  UnderlineElement,
-  StrikeElement,
-  CodeElement,
-  PreElement,
-  BlockquoteElement,
-  BreakElement,
-  ImageElement,
-  ImageFromUrl,
-  ImageFromAttachment,
-  LinkElement,
-  UnorderedListElement,
-  OrderedListElement,
-  ListItemElement,
-  ListItemWithText,
-  ListItemWithChildren,
-  ListItemChildElement,
-  DivElement,
-  DivChildElement,
-  ListElement,
-  MessageBodyElement,
-  MessageBody,
-} from "./message-body.js";
+export * from "./user/index.js";
 
-export {
-  isTextElement,
-  isBreakElement,
-  isImageElement,
-  isLinkElement,
-  isListElement,
-  isDivElement,
-  isValidMessageBody,
-} from "./message-body.js";
+export * from "./command/index.js";
 
 // Mail database types
 export type {
   IMPRCDatabase,
   ListMessagesOptions,
   PaginatedResult,
-} from "./mail-database.js";
-
-// Attachment types
-export type {
-  AttachmentMetadata,
-  IAttachmentStorage,
-  MessageAttachment,
-} from "./attachment.js";
-
-// Types
-export type {
-  Message,
-  User,
-  BaseMPRCCommand,
-  BaseMPRCResponse,
-  MPRCErrorResponse,
-  VerifyProtocolCommand,
-  VerifyProtocolCommandResponse,
-  FindUserCommand,
-  FindUserCommandResponse,
-  SendMessageCommand,
-  SendMessageCommandResponse,
-  ListMessagesCommand,
-  ListMessagesCommandResponse,
-  ReadMessageCommand,
-  ReadMessageCommandResponse,
-  DeleteMessageCommand,
-  DeleteMessageCommandResponse,
-  LoadAttachmentCommand,
-  LoadAttachmentCommandResponse,
-  MPRCCommand,
-  MPRCCommandResponse,
-  MPRCCommandName,
-} from "./types.js";
-
-// Type guards and utilities
-export {
-  MPRC_COMMAND_NAMES,
-  isMPRCCommand,
-  isVerifyCommand,
-  isFindUserCommand,
-  isSendMessageCommand,
-  isValidMessage,
-  isErrorResponse,
-  isLoadAttachmentCommand,
-  isAttachmentMetadata,
-  createRequestId,
-  createVerifyCommand,
-  createFindUserCommand,
-  createSendMessageCommand,
-  createListMessagesCommand,
-  createReadMessageCommand,
-  createLoadAttachmentCommand,
-} from "./types.js";
+} from "./storage/mail-storage.js";
 
 // Errors
 export {
@@ -159,12 +39,3 @@ export {
   AttachmentNotFoundError,
   MessageDeliveryError,
 } from "./errors.js";
-
-// HTML Rendering
-export type { MessageToHTMLOptions } from "./html-renderer.js";
-
-export {
-  messageBodyToHTML,
-  messageBodyToHTMLDocument,
-  messageToHTML,
-} from "./html-renderer.js";

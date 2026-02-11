@@ -9,17 +9,16 @@
  * @module @mprc/server/database
  */
 
-import type { Message, User } from "@mprc/shared";
 import type {
   IMPRCDatabase,
+  User,
+  Message,
+  StoredMessage,
+  AttachmentMetadata,
+  IAttachmentStorage,
   ListMessagesOptions,
   PaginatedResult,
-} from "../../protocol/mail-database.js";
-import type {
-  IAttachmentStorage,
-  AttachmentMetadata,
-} from "../../protocol/attachment.js";
-import type { StoredMessage } from "../../protocol/types.js";
+} from "../../protocol/index.js";
 /**
  * In-memory database implementation for the MPRC server.
  *

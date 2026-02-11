@@ -1,0 +1,1 @@
+{"version":3,"file":"user.d.ts","sourceRoot":"","sources":["../../../src/protocol/user/user.ts"],"names":[],"mappings":"AAAA;;GAEG;AACH,MAAM,WAAW,IAAI;IACnB,qCAAqC;IACrC,EAAE,EAAE,MAAM,CAAC;IACX,2BAA2B;IAC3B,KAAK,EAAE,MAAM,CAAC;IACd,0BAA0B;IAC1B,QAAQ,CAAC,EAAE,MAAM,CAAC;IAClB,iCAAiC;IACjC,SAAS,CAAC,EAAE,IAAI,CAAC;CAClB"}

@@ -17,7 +17,7 @@ import type {
   IAttachmentStorage,
   AttachmentMetadata,
   MessageAttachment,
-} from "../../protocol/attachment.js";
+} from "../../index.js";
 
 /**
  * Configuration options for filesystem storage.

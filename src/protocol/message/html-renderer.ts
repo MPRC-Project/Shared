@@ -22,7 +22,7 @@ import type {
   DivElement,
   DivChildElement,
   ListItemChildElement,
-} from "./message-body.js";
+} from "./message.js";
 import type {
   ElementStyle,
   BlockElementStyle,
