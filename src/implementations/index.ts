@@ -1,10 +1,5 @@
-export {
-  FilesystemAttachmentStorage,
-  createDefaultAttachmentStorage,
-} from "./attachment-database/filesystem.js";
-export type { FilesystemStorageOptions } from "./attachment-database/filesystem.js";
+export * from "./attachment-database/filesystem.js";
 
-export {
-  InMemoryMailDatabase,
-  createDefaultMailDatabase,
-} from "./mail-database/memory.js";
+export * from "./mail-database/memory.js";
+
+export * from "./user-database/memory.js";
