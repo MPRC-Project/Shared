@@ -5,5 +5,7 @@ export type { IAttachmentStorage } from "./attachment-storage.js";
 export type {
   PaginatedResult,
   ListMessagesOptions,
-  IMPRCDatabase,
+  IMailDatabase,
 } from "./mail-storage.js";
+
+export * from "./user-storage.js";

@@ -8,7 +8,7 @@
  *
  * @module @mprc/server/database
  */
-import type { IMPRCDatabase, User, Message, StoredMessage, IAttachmentStorage, ListMessagesOptions, PaginatedResult } from "../../protocol/index.js";
+import type { IMailDatabase, User, Message, StoredMessage, IAttachmentStorage, ListMessagesOptions, PaginatedResult } from "../../protocol/index.js";
 /**
  * In-memory database implementation for the MPRC server.
  *
@@ -37,7 +37,7 @@ import type { IMPRCDatabase, User, Message, StoredMessage, IAttachmentStorage, L
  * });
  * ```
  */
-export declare class InMemoryDatabase implements IMPRCDatabase {
+export declare class InMemoryMailDatabase implements IMailDatabase {
     /** Map of user ID to User object */
     private users;
     /** Map of email to user ID for quick lookup */
@@ -64,48 +64,6 @@ export declare class InMemoryDatabase implements IMPRCDatabase {
      * Closes the database (clears all data).
      */
     close(): Promise<void>;
-    /**
-     * Health check - always returns true for in-memory database.
-     */
-    healthCheck(): Promise<boolean>;
-    /**
-     * Retrieves a user by their email address.
-     *
-     * @param email - The email address to look up
-     * @returns The user if found, null otherwise
-     */
-    getUserByEmail(email: string): Promise<User | null>;
-    /**
-     * Retrieves a user by their unique ID.
-     *
-     * @param id - The user's unique identifier
-     * @returns The user if found, null otherwise
-     */
-    getUserById(id: string): Promise<User | null>;
-    /**
-     * Creates a new user.
-     *
-     * @param user - The user data to create
-     * @returns The created user with createdAt timestamp
-     * @throws Error if email is already registered
-     */
-    createUser(user: Omit<User, "createdAt">): Promise<User>;
-    /**
-     * Updates an existing user.
-     *
-     * @param id - The user's unique identifier
-     * @param updates - Partial user data to update
-     * @returns The updated user
-     * @throws Error if user not found
-     */
-    updateUser(id: string, updates: Partial<Omit<User, "id">>): Promise<User>;
-    /**
-     * Checks if a user with the given email exists.
-     *
-     * @param email - The email address to check
-     * @returns True if the user exists
-     */
-    userExists(email: string): Promise<boolean>;
     /**
      * Stores a new message.
      *
@@ -134,7 +92,7 @@ export declare class InMemoryDatabase implements IMPRCDatabase {
      * @param email - The recipient's email address
      * @returns Array of messages
      */
-    getMessagesForUser(email: string): Promise<StoredMessage[]>;
+    getMessagesForUser(user: User): Promise<StoredMessage[]>;
     /**
      * Deletes a message by its unique ID.
      *
@@ -167,5 +125,5 @@ export declare class InMemoryDatabase implements IMPRCDatabase {
  * Default database instance for the server.
  * Pre-populated with test users for development.
  */
-export declare function createDefaultDatabase(): InMemoryDatabase;
+export declare function createDefaultMailDatabase(): InMemoryMailDatabase;
 //# sourceMappingURL=memory.d.ts.map

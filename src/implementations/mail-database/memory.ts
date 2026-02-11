@@ -10,7 +10,7 @@
  */
 
 import type {
-  IMPRCDatabase,
+  IMailDatabase,
   User,
   Message,
   StoredMessage,
@@ -47,7 +47,7 @@ import type {
  * });
  * ```
  */
-export class InMemoryDatabase implements IMPRCDatabase {
+export class InMemoryMailDatabase implements IMailDatabase {
   /** Map of user ID to User object */
   private users: Map<string, User> = new Map();
   /** Map of email to user ID for quick lookup */
@@ -92,122 +92,6 @@ export class InMemoryDatabase implements IMPRCDatabase {
     this.recipientIndex.clear();
     this.readStatus.clear();
     console.log("📦 In-memory database closed");
-  }
-
-  /**
-   * Health check - always returns true for in-memory database.
-   */
-  async healthCheck(): Promise<boolean> {
-    return true;
-  }
-
-  // =========================================================================
-  // User Operations
-  // =========================================================================
-
-  /**
-   * Retrieves a user by their email address.
-   *
-   * @param email - The email address to look up
-   * @returns The user if found, null otherwise
-   */
-  async getUserByEmail(email: string): Promise<User | null> {
-    const userId = this.emailIndex.get(email.toLowerCase());
-    if (!userId) {
-      return null;
-    }
-    return this.users.get(userId) ?? null;
-  }
-
-  /**
-   * Retrieves a user by their unique ID.
-   *
-   * @param id - The user's unique identifier
-   * @returns The user if found, null otherwise
-   */
-  async getUserById(id: string): Promise<User | null> {
-    return this.users.get(id) ?? null;
-  }
-
-  /**
-   * Creates a new user.
-   *
-   * @param user - The user data to create
-   * @returns The created user with createdAt timestamp
-   * @throws Error if email is already registered
-   */
-  async createUser(user: Omit<User, "createdAt">): Promise<User> {
-    const email = user.email.toLowerCase();
-
-    if (this.emailIndex.has(email)) {
-      throw new Error(`User with email ${email} already exists`);
-    }
-
-    const newUser: User = {
-      ...user,
-      email,
-      createdAt: new Date(),
-    };
-
-    this.users.set(user.id, newUser);
-    this.emailIndex.set(email, user.id);
-    this.recipientIndex.set(email, new Set());
-
-    return newUser;
-  }
-
-  /**
-   * Updates an existing user.
-   *
-   * @param id - The user's unique identifier
-   * @param updates - Partial user data to update
-   * @returns The updated user
-   * @throws Error if user not found
-   */
-  async updateUser(
-    id: string,
-    updates: Partial<Omit<User, "id">>,
-  ): Promise<User> {
-    const user = this.users.get(id);
-    if (!user) {
-      throw new Error(`User with ID ${id} not found`);
-    }
-
-    // If email is being updated, update the index
-    if (updates.email && updates.email.toLowerCase() !== user.email) {
-      const newEmail = updates.email.toLowerCase();
-      if (this.emailIndex.has(newEmail)) {
-        throw new Error(`Email ${newEmail} is already in use`);
-      }
-      this.emailIndex.delete(user.email);
-      this.emailIndex.set(newEmail, id);
-
-      // Move messages to new email index
-      const messageIds = this.recipientIndex.get(user.email);
-      if (messageIds) {
-        this.recipientIndex.delete(user.email);
-        this.recipientIndex.set(newEmail, messageIds);
-      }
-    }
-
-    const updatedUser: User = {
-      ...user,
-      ...updates,
-      email: (updates.email ?? user.email).toLowerCase(),
-    };
-
-    this.users.set(id, updatedUser);
-    return updatedUser;
-  }
-
-  /**
-   * Checks if a user with the given email exists.
-   *
-   * @param email - The email address to check
-   * @returns True if the user exists
-   */
-  async userExists(email: string): Promise<boolean> {
-    return this.emailIndex.has(email.toLowerCase());
   }
 
   // =========================================================================
@@ -359,8 +243,8 @@ export class InMemoryDatabase implements IMPRCDatabase {
    * @param email - The recipient's email address
    * @returns Array of messages
    */
-  async getMessagesForUser(email: string): Promise<StoredMessage[]> {
-    const recipientEmail = email.toLowerCase();
+  async getMessagesForUser(user: User): Promise<StoredMessage[]> {
+    const recipientEmail = user.email.toLowerCase();
     const messageIds = this.recipientIndex.get(recipientEmail) ?? new Set();
 
     const messages: StoredMessage[] = [];
@@ -449,7 +333,7 @@ export class InMemoryDatabase implements IMPRCDatabase {
  * Default database instance for the server.
  * Pre-populated with test users for development.
  */
-export function createDefaultDatabase(): InMemoryDatabase {
-  const db = new InMemoryDatabase();
+export function createDefaultMailDatabase(): InMemoryMailDatabase {
+  const db = new InMemoryMailDatabase();
   return db;
 }

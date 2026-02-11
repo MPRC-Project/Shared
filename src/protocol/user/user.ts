@@ -7,7 +7,9 @@ export interface User {
   /** User's email address */
   email: string;
   /** User's display name */
-  username?: string;
+  username: string;
+  /** User's password hash */
+  passwordHash: string;
   /** Account creation timestamp */
   createdAt?: Date;
 }

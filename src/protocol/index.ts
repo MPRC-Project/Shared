@@ -16,7 +16,7 @@ export * from "./command/index.js";
 
 // Mail database types
 export type {
-  IMPRCDatabase,
+  IMailDatabase,
   ListMessagesOptions,
   PaginatedResult,
 } from "./storage/mail-storage.js";
