@@ -17,7 +17,7 @@ import type { User } from "../index.js";
  * }
  */
 
-export interface UserDatabase {
+export interface IUserDatabase {
   // =========================================================================
   // User Operations
   // =========================================================================

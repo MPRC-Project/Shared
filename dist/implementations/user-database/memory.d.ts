@@ -1,5 +1,5 @@
-import type { User, UserDatabase } from "../../index.js";
-declare class InMemoryUserDatabase implements UserDatabase {
+import type { User, IUserDatabase } from "../../index.js";
+declare class InMemoryUserDatabase implements IUserDatabase {
     private users;
     createUser(user: User): Promise<User>;
     getUserByEmail(email: string): Promise<User | null>;

@@ -15,7 +15,7 @@ import type { User } from "../index.js";
  *  }
  * }
  */
-export interface UserDatabase {
+export interface IUserDatabase {
     /**
      * Retrieves a user by their email address.
      *

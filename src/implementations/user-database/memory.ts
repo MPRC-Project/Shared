@@ -1,6 +1,6 @@
-import type { User, UserDatabase } from "../../index.js";
+import type { User, IUserDatabase } from "../../index.js";
 
-class InMemoryUserDatabase implements UserDatabase {
+class InMemoryUserDatabase implements IUserDatabase {
   private users: Map<string, User> = new Map();
 
   async createUser(user: User): Promise<User> {
