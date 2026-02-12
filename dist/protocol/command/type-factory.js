@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 /**
  * Creates a unique request ID for commands.
  *
