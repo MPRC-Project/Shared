@@ -1,4 +1,5 @@
 import type {
+  AdminAuthentication,
   AttachmentMetadata,
   FindUserCommand,
   ListMessagesCommand,
@@ -49,13 +50,18 @@ export function createFindUserCommand(email: string): FindUserCommand {
  * Creates a SEND_MESSAGE command.
  *
  * @param message - The message to send
+ * @param adminAuth - Admin authentication object
  * @returns A new SendMessageCommand
  */
-export function createSendMessageCommand(message: Message): SendMessageCommand {
+export function createSendMessageCommand(
+  message: Message,
+  adminAuth: AdminAuthentication,
+): SendMessageCommand {
   return {
     command: "SEND_MESSAGE",
     requestId: createRequestId(),
     message,
+    adminAuth,
   };
 }
 
@@ -64,17 +70,20 @@ export function createSendMessageCommand(message: Message): SendMessageCommand {
  *
  * @param messageId - The ID of the message to read
  * @param markAsRead - Whether to mark the message as read (default: false)
+ * @param adminAuth - Admin authentication object
  * @returns A new ReadMessageCommand
  */
 export function createReadMessageCommand(
   messageId: string,
   markAsRead: boolean = false,
+  adminAuth: AdminAuthentication,
 ): ReadMessageCommand {
   return {
     command: "READ_MESSAGE",
     requestId: createRequestId(),
     messageId,
     markAsRead,
+    adminAuth,
   };
 }
 
@@ -83,43 +92,48 @@ export function createReadMessageCommand(
  * Supports optional filtering and pagination parameters.
  * @param email - The email address of the mailbox to list messages from
  * @param options - Optional filtering and pagination options
+ * @param adminAuth - Admin authentication object
  * @returns A new ListMessagesCommand
  * @example
  * // List first 20 messages in inbox
- * createListMessagesCommand("user@example.com", { limit: 20 });
+ * createListMessagesCommand("user@example.com", { limit: 20 }, adminAuth);
  */
-
 export function createListMessagesCommand(
   email: string,
-  options?: {
+  options: {
     folder?: string;
     tags?: string[];
     limit?: number;
     offset?: number;
     since?: Date;
     unreadOnly?: boolean;
-  },
+  } = {},
+  adminAuth: AdminAuthentication,
 ): ListMessagesCommand {
   return {
     command: "LIST_MESSAGES",
     requestId: createRequestId(),
     email,
     ...options,
+    adminAuth,
   };
 }
 
 /**
  * Creates a LOAD_ATTACHMENT command.
  *
- * @param contentHash - The content hash of the attachment to load
+ * @param attachmentMetadata - The metadata of the attachment to load
+ * @param adminAuth - Admin authentication object
  * @returns A new LoadAttachmentCommand
  */
 export function createLoadAttachmentCommand(
   attachmentMetadata: AttachmentMetadata,
+  adminAuth: AdminAuthentication,
 ): LoadAttachmentCommand {
   return {
     command: "LOAD_ATTACHMENT",
     requestId: createRequestId(),
     attachmentMetadata,
+    adminAuth,
   };
 }

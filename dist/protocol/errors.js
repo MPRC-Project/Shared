@@ -284,4 +284,96 @@ export class MessageDeliveryError extends MPRCError {
         };
     }
 }
+/**
+ * Error thrown when admin authentication is required but not provided.
+ */
+export class AdminAuthenticationRequiredError extends MPRCError {
+    code = "ADMIN_AUTH_REQUIRED";
+    statusCode = 401;
+    /** The command that requires authentication */
+    commandType;
+    constructor(commandType) {
+        super(`Command ${commandType} requires admin authentication. Please provide valid adminAuth with your request.`);
+        this.commandType = commandType;
+    }
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            commandType: this.commandType,
+        };
+    }
+}
+/**
+ * Error thrown when admin authentication fails.
+ */
+export class AdminAuthenticationError extends MPRCError {
+    code = "ADMIN_AUTH_FAILED";
+    statusCode = 401;
+    /** The reason authentication failed */
+    reason;
+    constructor(reason) {
+        super(`Admin authentication failed: ${reason}`);
+        this.reason = reason;
+    }
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            reason: this.reason,
+        };
+    }
+}
+/**
+ * Error thrown when the admin public key is not found in server configuration.
+ */
+export class AdminKeyNotFoundError extends MPRCError {
+    code = "ADMIN_KEY_NOT_FOUND";
+    statusCode = 401;
+    constructor() {
+        super("Admin public key not found in server configuration. Ensure your public key is registered in the server's adminKeys configuration.");
+    }
+}
+/**
+ * Error thrown when an admin signature is invalid.
+ */
+export class InvalidAdminSignatureError extends MPRCError {
+    code = "INVALID_ADMIN_SIGNATURE";
+    statusCode = 401;
+    /** The name of the admin key that failed verification */
+    keyName;
+    constructor(keyName) {
+        super(keyName
+            ? `Invalid admin signature for key "${keyName}". Signature verification failed.`
+            : "Invalid admin signature. Signature verification failed.");
+        this.keyName = keyName;
+    }
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            keyName: this.keyName,
+        };
+    }
+}
+/**
+ * Error thrown when an admin signature is too old (replay attack prevention).
+ */
+export class SignatureTooOldError extends MPRCError {
+    code = "SIGNATURE_TOO_OLD";
+    statusCode = 401;
+    /** Age of the signature in milliseconds */
+    ageMs;
+    /** Maximum allowed age in milliseconds */
+    maxAgeMs;
+    constructor(ageMs, maxAgeMs) {
+        super(`Admin signature is too old (${Math.floor(ageMs / 1000)}s). Maximum age is ${Math.floor(maxAgeMs / 1000)}s. Please create a new signature.`);
+        this.ageMs = ageMs;
+        this.maxAgeMs = maxAgeMs;
+    }
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            ageMs: this.ageMs,
+            maxAgeMs: this.maxAgeMs,
+        };
+    }
+}
 //# sourceMappingURL=errors.js.map

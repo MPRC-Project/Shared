@@ -1,5 +1,40 @@
 import type { AttachmentMetadata, Message, MessageAttachment, StoredMessage } from "../message/index.js";
 /**
+ * Admin authentication using public/private key cryptography.
+ * Similar to SSH key authentication - the server stores admin public keys,
+ * and clients must sign requests with their private keys.
+ *
+ * This is distinct from future user authentication (which will use JWT tokens).
+ * Admin authentication is for server-to-server communication and administrative
+ * operations, while user authentication will be for end-user actions.
+ *
+ * @example
+ * ```typescript
+ * const adminAuth: AdminAuthentication = {
+ *   publicKey: "-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----",
+ *   signature: "base64-encoded-signature",
+ *   timestamp: Date.now(),
+ * };
+ * ```
+ */
+export interface AdminAuthentication {
+    /**
+     * The admin public key in PEM format.
+     * Must match one of the keys configured in the server's adminKeys.
+     */
+    publicKey: string;
+    /**
+     * Base64-encoded signature of the command payload.
+     * Created by signing the stringified command (excluding adminAuth) with the private key.
+     */
+    signature: string;
+    /**
+     * Unix timestamp in milliseconds when the signature was created.
+     * Used to prevent replay attacks (server rejects signatures older than a threshold).
+     */
+    timestamp: number;
+}
+/**
  * Base interface for all MPRC commands.
  * All commands must include a unique request ID for request-response matching.
  */
@@ -32,6 +67,8 @@ export interface MPRCErrorResponse extends BaseMPRCResponse {
  * Command to verify that a server supports the MPRC protocol.
  * Should be the first command sent when establishing a connection.
  *
+ * This command does NOT require admin authentication.
+ *
  * @example
  * ```typescript
  * const command: VerifyProtocolCommand = {
@@ -57,6 +94,9 @@ export interface VerifyProtocolCommandResponse extends BaseMPRCResponse {
 }
 /**
  * Command to check if a user exists on the server.
+ *
+ * This command does NOT require admin authentication as it's used
+ * for sender verification during message delivery.
  *
  * @example
  * ```typescript
@@ -84,6 +124,8 @@ export interface FindUserCommandResponse extends BaseMPRCResponse {
 /**
  * Command to send a message to a recipient.
  *
+ * REQUIRES ADMIN AUTHENTICATION: This command must include valid adminAuth.
+ *
  * @example
  * ```typescript
  * const command: SendMessageCommand = {
@@ -94,7 +136,12 @@ export interface FindUserCommandResponse extends BaseMPRCResponse {
  *     from: "sender@example.com",
  *     to: "recipient@example.com",
  *     subject: "Hello",
- *     body: "Message content",
+ *     body: [{ tag: "p", content: "Message content" }],
+ *   },
+ *   adminAuth: {
+ *     publicKey: "-----BEGIN PUBLIC KEY-----\n...",
+ *     signature: "base64-signature",
+ *     timestamp: Date.now(),
  *   },
  * };
  * ```
@@ -103,6 +150,8 @@ export interface SendMessageCommand extends BaseMPRCCommand {
     command: "SEND_MESSAGE";
     /** The message to send */
     message: Message;
+    /** Admin authentication (required) */
+    adminAuth: AdminAuthentication;
 }
 /**
  * Response to the SEND_MESSAGE command.
@@ -118,12 +167,13 @@ export interface SendMessageCommandResponse extends BaseMPRCResponse {
 /**
  * Command to list messages in a mailbox.
  *
+ * REQUIRES ADMIN AUTHENTICATION: This command must include valid adminAuth.
+ *
  * This command retrieves a paginated list of message summaries from the user's
  * mailbox. Supports filtering by folder, tags, date range, and read status.
  *
  * @example
  * ```typescript
- * // List all messages in inbox (first page)
  * const command: ListMessagesCommand = {
  *   command: "LIST_MESSAGES",
  *   requestId: crypto.randomUUID(),
@@ -131,6 +181,11 @@ export interface SendMessageCommandResponse extends BaseMPRCResponse {
  *   folder: "inbox",
  *   limit: 20,
  *   offset: 0,
+ *   adminAuth: {
+ *     publicKey: "-----BEGIN PUBLIC KEY-----\n...",
+ *     signature: "base64-signature",
+ *     timestamp: Date.now(),
+ *   },
  * };
  * ```
  */
@@ -177,18 +232,15 @@ export interface ListMessagesCommand extends BaseMPRCCommand {
      * @default false
      */
     unreadOnly?: boolean;
+    /** Admin authentication (required) */
+    adminAuth: AdminAuthentication;
 }
 /**
  * Response to the LIST_MESSAGES command.
- *
- * Contains a paginated array of message summaries along with
- * pagination metadata.
  */
 export interface ListMessagesCommandResponse extends BaseMPRCResponse {
     /**
      * Array of message summaries.
-     * Contains lightweight message data suitable for listing.
-     * Use READ_MESSAGE command to fetch full message content.
      */
     messages: Array<{
         /** Unique message identifier */
@@ -204,28 +256,31 @@ export interface ListMessagesCommandResponse extends BaseMPRCResponse {
     }>;
     /**
      * Total number of messages matching the query.
-     * This is the total count before pagination is applied.
      */
     total: number;
     /**
      * Whether there are more messages available.
-     * When true, increment `offset` by `limit` to fetch the next page.
      */
     hasMore: boolean;
 }
 /**
  * Command to read specific message from a mailbox.
  *
- * This command retrieves a full message by its ID, optionally marking it as read.
+ * REQUIRES ADMIN AUTHENTICATION: This command must include valid adminAuth.
  *
  * @example
  * ```typescript
- * // Read a specific message by ID
  * const command: ReadMessageCommand = {
  *   command: "READ_MESSAGE",
  *   requestId: crypto.randomUUID(),
  *   messageId: "12345",
  *   markAsRead: true,
+ *   adminAuth: {
+ *     publicKey: "-----BEGIN PUBLIC KEY-----\n...",
+ *     signature: "base64-signature",
+ *     timestamp: Date.now(),
+ *   },
+ * };
  * ```
  */
 export interface ReadMessageCommand extends BaseMPRCCommand {
@@ -234,10 +289,11 @@ export interface ReadMessageCommand extends BaseMPRCCommand {
     messageId: string;
     /** Whether to mark the message as read */
     markAsRead?: boolean;
+    /** Admin authentication (required) */
+    adminAuth: AdminAuthentication;
 }
 /**
  * Response to the READ_MESSAGE command.
- * Contains the full message content.
  */
 export interface ReadMessageCommandResponse extends BaseMPRCResponse {
     /** The full message content */
@@ -246,15 +302,41 @@ export interface ReadMessageCommandResponse extends BaseMPRCResponse {
     found: boolean;
 }
 /**
- * Command to load attachment for message
+ * Command to load attachment for message.
  *
+ * REQUIRES ADMIN AUTHENTICATION: This command must include valid adminAuth.
+ *
+ * @example
+ * ```typescript
+ * const command: LoadAttachmentCommand = {
+ *   command: "LOAD_ATTACHMENT",
+ *   requestId: crypto.randomUUID(),
+ *   attachmentMetadata: {
+ *     id: "attachment-id",
+ *     filename: "document.pdf",
+ *     contentHash: "sha256-hash",
+ *     size: 1024,
+ *   },
+ *   adminAuth: {
+ *     publicKey: "-----BEGIN PUBLIC KEY-----\n...",
+ *     signature: "base64-signature",
+ *     timestamp: Date.now(),
+ *   },
+ * };
+ * ```
  */
 export interface LoadAttachmentCommand extends BaseMPRCCommand {
     command: "LOAD_ATTACHMENT";
     /** Metadata of the attachment to load */
     attachmentMetadata: AttachmentMetadata;
+    /** Admin authentication (required) */
+    adminAuth: AdminAuthentication;
 }
+/**
+ * Response to the LOAD_ATTACHMENT command.
+ */
 export interface LoadAttachmentCommandResponse extends BaseMPRCResponse {
+    /** The loaded attachment with content */
     attachment: MessageAttachment;
 }
 /**
@@ -267,6 +349,8 @@ export interface DeleteMessageCommand extends BaseMPRCCommand {
     messageId: string;
     /** Whether to permanently delete or move to trash */
     permanent?: boolean;
+    /** Admin authentication (required) */
+    adminAuth: AdminAuthentication;
 }
 /**
  * Response to the DELETE_MESSAGE command.
@@ -286,12 +370,10 @@ export declare const MPRC_COMMAND_NAMES: readonly ["VERIFY", "FIND_USER", "SEND_
 export type MPRCCommandName = (typeof MPRC_COMMAND_NAMES)[number];
 /**
  * Union type of all possible MPRC commands.
- * Add new command types here as they are implemented.
  */
 export type MPRCCommand = VerifyProtocolCommand | FindUserCommand | SendMessageCommand | ListMessagesCommand | ReadMessageCommand | LoadAttachmentCommand;
 /**
  * Union type of all possible MPRC command responses.
- * Add new response types here as they are implemented.
  */
 export type MPRCCommandResponse = VerifyProtocolCommandResponse | FindUserCommandResponse | SendMessageCommandResponse | MPRCErrorResponse | ListMessagesCommandResponse | ReadMessageCommandResponse | LoadAttachmentCommandResponse;
 //# sourceMappingURL=command.d.ts.map

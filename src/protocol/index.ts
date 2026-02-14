@@ -15,27 +15,7 @@ export * from "./user/index.js";
 export * from "./command/index.js";
 
 // Mail database types
-export type {
-  IMailDatabase,
-  ListMessagesOptions,
-  PaginatedResult,
-} from "./storage/mail-storage.js";
+export * from "./storage/mail-storage.js";
 
 // Errors
-export {
-  MPRCError,
-  NetworkError,
-  DnsResolutionError,
-  ConnectionError,
-  TimeoutError,
-  InvalidJsonError,
-  InvalidCommandError,
-  UnknownCommandError,
-  ProtocolVerificationError,
-  InvalidEmailError,
-  UserNotFoundError,
-  MessageNotFoundError,
-  SenderVerificationError,
-  AttachmentNotFoundError,
-  MessageDeliveryError,
-} from "./errors.js";
+export * from "./errors.js";

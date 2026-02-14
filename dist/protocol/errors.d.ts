@@ -173,4 +173,58 @@ export declare class MessageDeliveryError extends MPRCError {
     constructor(message: string, messageId?: string, cause?: Error);
     toJSON(): Record<string, unknown>;
 }
+/**
+ * Error thrown when admin authentication is required but not provided.
+ */
+export declare class AdminAuthenticationRequiredError extends MPRCError {
+    readonly code = "ADMIN_AUTH_REQUIRED";
+    readonly statusCode = 401;
+    /** The command that requires authentication */
+    readonly commandType: string;
+    constructor(commandType: string);
+    toJSON(): Record<string, unknown>;
+}
+/**
+ * Error thrown when admin authentication fails.
+ */
+export declare class AdminAuthenticationError extends MPRCError {
+    readonly code = "ADMIN_AUTH_FAILED";
+    readonly statusCode = 401;
+    /** The reason authentication failed */
+    readonly reason: string;
+    constructor(reason: string);
+    toJSON(): Record<string, unknown>;
+}
+/**
+ * Error thrown when the admin public key is not found in server configuration.
+ */
+export declare class AdminKeyNotFoundError extends MPRCError {
+    readonly code = "ADMIN_KEY_NOT_FOUND";
+    readonly statusCode = 401;
+    constructor();
+}
+/**
+ * Error thrown when an admin signature is invalid.
+ */
+export declare class InvalidAdminSignatureError extends MPRCError {
+    readonly code = "INVALID_ADMIN_SIGNATURE";
+    readonly statusCode = 401;
+    /** The name of the admin key that failed verification */
+    readonly keyName?: string | undefined;
+    constructor(keyName?: string);
+    toJSON(): Record<string, unknown>;
+}
+/**
+ * Error thrown when an admin signature is too old (replay attack prevention).
+ */
+export declare class SignatureTooOldError extends MPRCError {
+    readonly code = "SIGNATURE_TOO_OLD";
+    readonly statusCode = 401;
+    /** Age of the signature in milliseconds */
+    readonly ageMs: number;
+    /** Maximum allowed age in milliseconds */
+    readonly maxAgeMs: number;
+    constructor(ageMs: number, maxAgeMs: number);
+    toJSON(): Record<string, unknown>;
+}
 //# sourceMappingURL=errors.d.ts.map
