@@ -55,13 +55,11 @@ export function createFindUserCommand(email: string): FindUserCommand {
  */
 export function createSendMessageCommand(
   message: Message,
-  adminAuth: AdminAuthentication,
-): SendMessageCommand {
+): Omit<SendMessageCommand, "adminAuth"> {
   return {
     command: "SEND_MESSAGE",
     requestId: createRequestId(),
     message,
-    adminAuth,
   };
 }
 
@@ -76,14 +74,12 @@ export function createSendMessageCommand(
 export function createReadMessageCommand(
   messageId: string,
   markAsRead: boolean = false,
-  adminAuth: AdminAuthentication,
-): ReadMessageCommand {
+): Omit<ReadMessageCommand, "adminAuth"> {
   return {
     command: "READ_MESSAGE",
     requestId: createRequestId(),
     messageId,
     markAsRead,
-    adminAuth,
   };
 }
 
@@ -108,14 +104,12 @@ export function createListMessagesCommand(
     since?: Date;
     unreadOnly?: boolean;
   } = {},
-  adminAuth: AdminAuthentication,
-): ListMessagesCommand {
+): Omit<ListMessagesCommand, "adminAuth"> {
   return {
     command: "LIST_MESSAGES",
     requestId: createRequestId(),
     email,
     ...options,
-    adminAuth,
   };
 }
 
@@ -128,12 +122,10 @@ export function createListMessagesCommand(
  */
 export function createLoadAttachmentCommand(
   attachmentMetadata: AttachmentMetadata,
-  adminAuth: AdminAuthentication,
-): LoadAttachmentCommand {
+): Omit<LoadAttachmentCommand, "adminAuth"> {
   return {
     command: "LOAD_ATTACHMENT",
     requestId: createRequestId(),
     attachmentMetadata,
-    adminAuth,
   };
 }

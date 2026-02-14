@@ -38,12 +38,11 @@ export function createFindUserCommand(email) {
  * @param adminAuth - Admin authentication object
  * @returns A new SendMessageCommand
  */
-export function createSendMessageCommand(message, adminAuth) {
+export function createSendMessageCommand(message) {
     return {
         command: "SEND_MESSAGE",
         requestId: createRequestId(),
         message,
-        adminAuth,
     };
 }
 /**
@@ -54,13 +53,12 @@ export function createSendMessageCommand(message, adminAuth) {
  * @param adminAuth - Admin authentication object
  * @returns A new ReadMessageCommand
  */
-export function createReadMessageCommand(messageId, markAsRead = false, adminAuth) {
+export function createReadMessageCommand(messageId, markAsRead = false) {
     return {
         command: "READ_MESSAGE",
         requestId: createRequestId(),
         messageId,
         markAsRead,
-        adminAuth,
     };
 }
 /**
@@ -74,13 +72,12 @@ export function createReadMessageCommand(messageId, markAsRead = false, adminAut
  * // List first 20 messages in inbox
  * createListMessagesCommand("user@example.com", { limit: 20 }, adminAuth);
  */
-export function createListMessagesCommand(email, options = {}, adminAuth) {
+export function createListMessagesCommand(email, options = {}) {
     return {
         command: "LIST_MESSAGES",
         requestId: createRequestId(),
         email,
         ...options,
-        adminAuth,
     };
 }
 /**
@@ -90,12 +87,11 @@ export function createListMessagesCommand(email, options = {}, adminAuth) {
  * @param adminAuth - Admin authentication object
  * @returns A new LoadAttachmentCommand
  */
-export function createLoadAttachmentCommand(attachmentMetadata, adminAuth) {
+export function createLoadAttachmentCommand(attachmentMetadata) {
     return {
         command: "LOAD_ATTACHMENT",
         requestId: createRequestId(),
         attachmentMetadata,
-        adminAuth,
     };
 }
 //# sourceMappingURL=type-factory.js.map

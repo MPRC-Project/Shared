@@ -1,4 +1,4 @@
-import type { AdminAuthentication, AttachmentMetadata, FindUserCommand, ListMessagesCommand, LoadAttachmentCommand, Message, ReadMessageCommand, SendMessageCommand, VerifyProtocolCommand } from "../index.js";
+import type { AttachmentMetadata, FindUserCommand, ListMessagesCommand, LoadAttachmentCommand, Message, ReadMessageCommand, SendMessageCommand, VerifyProtocolCommand } from "../index.js";
 /**
  * Creates a unique request ID for commands.
  *
@@ -25,7 +25,7 @@ export declare function createFindUserCommand(email: string): FindUserCommand;
  * @param adminAuth - Admin authentication object
  * @returns A new SendMessageCommand
  */
-export declare function createSendMessageCommand(message: Message, adminAuth: AdminAuthentication): SendMessageCommand;
+export declare function createSendMessageCommand(message: Message): Omit<SendMessageCommand, "adminAuth">;
 /**
  * Creates a READ_MESSAGE command.
  *
@@ -34,7 +34,7 @@ export declare function createSendMessageCommand(message: Message, adminAuth: Ad
  * @param adminAuth - Admin authentication object
  * @returns A new ReadMessageCommand
  */
-export declare function createReadMessageCommand(messageId: string, markAsRead: boolean | undefined, adminAuth: AdminAuthentication): ReadMessageCommand;
+export declare function createReadMessageCommand(messageId: string, markAsRead?: boolean): Omit<ReadMessageCommand, "adminAuth">;
 /**
  * Creates a LIST_MESSAGES command.
  * Supports optional filtering and pagination parameters.
@@ -46,14 +46,14 @@ export declare function createReadMessageCommand(messageId: string, markAsRead: 
  * // List first 20 messages in inbox
  * createListMessagesCommand("user@example.com", { limit: 20 }, adminAuth);
  */
-export declare function createListMessagesCommand(email: string, options: {
+export declare function createListMessagesCommand(email: string, options?: {
     folder?: string;
     tags?: string[];
     limit?: number;
     offset?: number;
     since?: Date;
     unreadOnly?: boolean;
-} | undefined, adminAuth: AdminAuthentication): ListMessagesCommand;
+}): Omit<ListMessagesCommand, "adminAuth">;
 /**
  * Creates a LOAD_ATTACHMENT command.
  *
@@ -61,5 +61,5 @@ export declare function createListMessagesCommand(email: string, options: {
  * @param adminAuth - Admin authentication object
  * @returns A new LoadAttachmentCommand
  */
-export declare function createLoadAttachmentCommand(attachmentMetadata: AttachmentMetadata, adminAuth: AdminAuthentication): LoadAttachmentCommand;
+export declare function createLoadAttachmentCommand(attachmentMetadata: AttachmentMetadata): Omit<LoadAttachmentCommand, "adminAuth">;
 //# sourceMappingURL=type-factory.d.ts.map
