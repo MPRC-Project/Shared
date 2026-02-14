@@ -26,7 +26,11 @@
     "build": "tsc",
     "clean": "rm -rf dist",
     "prepare": "npm run build",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "generate-keys": "node scripts/generate-admin-keys.js",
+    "generate-keys:rsa": "node scripts/generate-admin-keys.js",
+    "generate-keys:ed25519": "node scripts/generate-admin-keys.js"
+    
   },
   "keywords": [
     "mprc",
