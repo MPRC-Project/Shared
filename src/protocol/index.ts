@@ -17,5 +17,7 @@ export * from "./command/index.js";
 // Mail database types
 export * from "./storage/mail-storage.js";
 
+export * from "./admin-auth.js";
+
 // Errors
 export * from "./errors.js";
