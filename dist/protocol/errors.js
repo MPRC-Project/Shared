@@ -395,4 +395,23 @@ export class InvalidPasswordError extends MPRCError {
         };
     }
 }
+/**
+ * Error thrown when a JWT token is invalid (e.g. expired, malformed).
+ */
+export class InvalidJWTTokenError extends MPRCError {
+    code = "INVALID_JWT_TOKEN";
+    statusCode = 401;
+    /** The reason the JWT token is invalid (e.g. expired, malformed) */
+    reason;
+    constructor(reason) {
+        super(`Invalid JWT token: ${reason}`);
+        this.reason = reason;
+    }
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            reason: this.reason,
+        };
+    }
+}
 //# sourceMappingURL=errors.js.map
