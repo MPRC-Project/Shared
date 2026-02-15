@@ -12,6 +12,7 @@ import type {
   VerifyUserExistanceCommand,
 } from "../index.js";
 import crypto from "node:crypto";
+import type { JWTToken } from "../user/user.js";
 
 /**
  * Creates a unique request ID for commands.
@@ -53,16 +54,18 @@ export function createVerifyUserExistanceCommand(
  * Creates a SEND_MESSAGE command.
  *
  * @param message - The message to send
- * @param adminAuth - Admin authentication object
+ * @param jwtToken - The user's JWT token
  * @returns A new SendMessageCommand
  */
 export function createSendMessageCommand(
   message: Message,
+  jwtToken: JWTToken,
 ): Omit<SendMessageCommand, "adminAuth"> {
   return {
     command: "SEND_MESSAGE",
     requestId: createRequestId(),
     message,
+    jwtToken,
   };
 }
 
@@ -71,11 +74,12 @@ export function createSendMessageCommand(
  *
  * @param messageId - The ID of the message to read
  * @param markAsRead - Whether to mark the message as read (default: false)
- * @param adminAuth - Admin authentication object
+ * @param jwtToken - The user's JWT token
  * @returns A new ReadMessageCommand
  */
 export function createReadMessageCommand(
   messageId: string,
+  jwtToken: JWTToken,
   markAsRead: boolean = false,
 ): Omit<ReadMessageCommand, "adminAuth"> {
   return {
@@ -83,6 +87,7 @@ export function createReadMessageCommand(
     requestId: createRequestId(),
     messageId,
     markAsRead,
+    jwtToken,
   };
 }
 
@@ -92,13 +97,14 @@ export function createReadMessageCommand(
  * @param email - The email address of the mailbox to list messages from
  * @param options - Optional filtering and pagination options
  * @param adminAuth - Admin authentication object
+ * @param jwtToken - The user's JWT token
  * @returns A new ListMessagesCommand
  * @example
  * // List first 20 messages in inbox
  * createListMessagesCommand("user@example.com", { limit: 20 }, adminAuth);
  */
 export function createListMessagesCommand(
-  email: string,
+  jwtToken: JWTToken,
   options: {
     folder?: string;
     tags?: string[];
@@ -111,7 +117,7 @@ export function createListMessagesCommand(
   return {
     command: "LIST_MESSAGES",
     requestId: createRequestId(),
-    email,
+    jwtToken: jwtToken,
     ...options,
   };
 }

@@ -11,4 +11,10 @@ export interface User {
     /** Account creation timestamp */
     createdAt?: Date;
 }
+export interface JWTToken {
+    /** The token string */
+    token: string;
+    /** Expiration date of the token */
+    expiresAt: Date;
+}
 //# sourceMappingURL=user.d.ts.map

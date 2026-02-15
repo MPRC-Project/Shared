@@ -34,14 +34,15 @@ export function createVerifyUserExistanceCommand(email) {
  * Creates a SEND_MESSAGE command.
  *
  * @param message - The message to send
- * @param adminAuth - Admin authentication object
+ * @param jwtToken - The user's JWT token
  * @returns A new SendMessageCommand
  */
-export function createSendMessageCommand(message) {
+export function createSendMessageCommand(message, jwtToken) {
     return {
         command: "SEND_MESSAGE",
         requestId: createRequestId(),
         message,
+        jwtToken,
     };
 }
 /**
@@ -49,15 +50,16 @@ export function createSendMessageCommand(message) {
  *
  * @param messageId - The ID of the message to read
  * @param markAsRead - Whether to mark the message as read (default: false)
- * @param adminAuth - Admin authentication object
+ * @param jwtToken - The user's JWT token
  * @returns A new ReadMessageCommand
  */
-export function createReadMessageCommand(messageId, markAsRead = false) {
+export function createReadMessageCommand(messageId, jwtToken, markAsRead = false) {
     return {
         command: "READ_MESSAGE",
         requestId: createRequestId(),
         messageId,
         markAsRead,
+        jwtToken,
     };
 }
 /**
@@ -66,16 +68,17 @@ export function createReadMessageCommand(messageId, markAsRead = false) {
  * @param email - The email address of the mailbox to list messages from
  * @param options - Optional filtering and pagination options
  * @param adminAuth - Admin authentication object
+ * @param jwtToken - The user's JWT token
  * @returns A new ListMessagesCommand
  * @example
  * // List first 20 messages in inbox
  * createListMessagesCommand("user@example.com", { limit: 20 }, adminAuth);
  */
-export function createListMessagesCommand(email, options = {}) {
+export function createListMessagesCommand(jwtToken, options = {}) {
     return {
         command: "LIST_MESSAGES",
         requestId: createRequestId(),
-        email,
+        jwtToken: jwtToken,
         ...options,
     };
 }

@@ -1,4 +1,5 @@
 import type { AttachmentMetadata, CreateUserCommand, ListMessagesCommand, LoadAttachmentCommand, Message, ReadMessageCommand, SendMessageCommand, UserSignInCommand, VerifyProtocolCommand, VerifyUserExistanceCommand } from "../index.js";
+import type { JWTToken } from "../user/user.js";
 /**
  * Creates a unique request ID for commands.
  *
@@ -21,31 +22,32 @@ export declare function createVerifyUserExistanceCommand(email: string): VerifyU
  * Creates a SEND_MESSAGE command.
  *
  * @param message - The message to send
- * @param adminAuth - Admin authentication object
+ * @param jwtToken - The user's JWT token
  * @returns A new SendMessageCommand
  */
-export declare function createSendMessageCommand(message: Message): Omit<SendMessageCommand, "adminAuth">;
+export declare function createSendMessageCommand(message: Message, jwtToken: JWTToken): Omit<SendMessageCommand, "adminAuth">;
 /**
  * Creates a READ_MESSAGE command.
  *
  * @param messageId - The ID of the message to read
  * @param markAsRead - Whether to mark the message as read (default: false)
- * @param adminAuth - Admin authentication object
+ * @param jwtToken - The user's JWT token
  * @returns A new ReadMessageCommand
  */
-export declare function createReadMessageCommand(messageId: string, markAsRead?: boolean): Omit<ReadMessageCommand, "adminAuth">;
+export declare function createReadMessageCommand(messageId: string, jwtToken: JWTToken, markAsRead?: boolean): Omit<ReadMessageCommand, "adminAuth">;
 /**
  * Creates a LIST_MESSAGES command.
  * Supports optional filtering and pagination parameters.
  * @param email - The email address of the mailbox to list messages from
  * @param options - Optional filtering and pagination options
  * @param adminAuth - Admin authentication object
+ * @param jwtToken - The user's JWT token
  * @returns A new ListMessagesCommand
  * @example
  * // List first 20 messages in inbox
  * createListMessagesCommand("user@example.com", { limit: 20 }, adminAuth);
  */
-export declare function createListMessagesCommand(email: string, options?: {
+export declare function createListMessagesCommand(jwtToken: JWTToken, options?: {
     folder?: string;
     tags?: string[];
     limit?: number;

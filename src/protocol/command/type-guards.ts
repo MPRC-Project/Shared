@@ -101,12 +101,7 @@ export function isSendMessageCommand(
 export function isListMessagesCommand(
   data: unknown,
 ): data is ListMessagesCommand {
-  return (
-    isMPRCCommand(data) &&
-    data.command === "LIST_MESSAGES" &&
-    "email" in data &&
-    typeof (data as ListMessagesCommand).email === "string"
-  );
+  return isMPRCCommand(data) && data.command === "LIST_MESSAGES";
 }
 
 /**

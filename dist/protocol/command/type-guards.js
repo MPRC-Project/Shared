@@ -65,10 +65,7 @@ export function isSendMessageCommand(data) {
  *
  */
 export function isListMessagesCommand(data) {
-    return (isMPRCCommand(data) &&
-        data.command === "LIST_MESSAGES" &&
-        "email" in data &&
-        typeof data.email === "string");
+    return isMPRCCommand(data) && data.command === "LIST_MESSAGES";
 }
 /**
  * Checks if the given data is a LOAD_ATTACHMENT command.

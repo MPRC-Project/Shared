@@ -1,4 +1,5 @@
 import type { AttachmentMetadata, Message, MessageAttachment, StoredMessage } from "../message/index.js";
+import type { JWTToken } from "../user/user.js";
 /**
  * Admin authentication using public/private key cryptography.
  * Similar to SSH key authentication - the server stores admin public keys,
@@ -150,6 +151,8 @@ export interface SendMessageCommand extends BaseMPRCCommand {
     message: Message;
     /** Admin authentication (required) */
     adminAuth: AdminAuthentication;
+    /** User's JWT token */
+    jwtToken: JWTToken;
 }
 /**
  * Response to the SEND_MESSAGE command.
@@ -190,11 +193,6 @@ export interface SendMessageCommandResponse extends BaseMPRCResponse {
 export interface ListMessagesCommand extends BaseMPRCCommand {
     command: "LIST_MESSAGES";
     /**
-     * Email address of the user whose messages to list.
-     * This identifies the mailbox to query.
-     */
-    email: string;
-    /**
      * Filter by folder/mailbox name.
      * Common values: "inbox", "sent", "drafts", "trash", "spam".
      * If omitted, returns messages from all folders.
@@ -232,6 +230,8 @@ export interface ListMessagesCommand extends BaseMPRCCommand {
     unreadOnly?: boolean;
     /** Admin authentication (required) */
     adminAuth: AdminAuthentication;
+    /** User's JWT token */
+    jwtToken: JWTToken;
 }
 /**
  * Response to the LIST_MESSAGES command.
@@ -278,6 +278,10 @@ export interface ListMessagesCommandResponse extends BaseMPRCResponse {
  *     signature: "base64-signature",
  *     timestamp: Date.now(),
  *   },
+ *  jwtToken: {
+ *    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+ *    expiresAt: new Date(Date.now() + 3600 * 1000), // 1 hour from now
+ *  },
  * };
  * ```
  */
@@ -289,6 +293,8 @@ export interface ReadMessageCommand extends BaseMPRCCommand {
     markAsRead?: boolean;
     /** Admin authentication (required) */
     adminAuth: AdminAuthentication;
+    /** User's JWT token */
+    jwtToken: JWTToken;
 }
 /**
  * Response to the READ_MESSAGE command.
@@ -375,7 +381,7 @@ export interface UserSignInCommandResponse extends BaseMPRCResponse {
     /** Whether the sign-in was successful */
     success: boolean;
     /** Optional JWT token for authenticated sessions */
-    token?: string;
+    token?: JWTToken;
 }
 /**
  * Command to delete a message.
