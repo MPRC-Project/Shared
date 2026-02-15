@@ -1,4 +1,4 @@
-import type { FindUserCommand, LoadAttachmentCommand, ListMessagesCommand, AttachmentMetadata, MPRCCommand, MPRCErrorResponse, Message, ReadMessageCommand, SendMessageCommand, VerifyProtocolCommand } from "../index.js";
+import type { FindUserCommand, LoadAttachmentCommand, ListMessagesCommand, AttachmentMetadata, MPRCCommand, MPRCErrorResponse, Message, ReadMessageCommand, SendMessageCommand, VerifyProtocolCommand, UserSignInCommand } from "../index.js";
 /**
  * Checks if the given data is a valid MPRC command.
  *
@@ -79,4 +79,11 @@ export declare function isAttachmentMetadata(data: unknown): data is AttachmentM
  * @returns True if the data is an MPRCErrorResponse
  */
 export declare function isErrorResponse(data: unknown): data is MPRCErrorResponse;
+/**
+ * Checks if the given data is a USER_SIGN_IN command.
+ *
+ * @param data - The data to check
+ * @returns True if the data is a UserSignInCommand
+ */
+export declare function isUserSignInCommand(data: unknown): data is UserSignInCommand;
 //# sourceMappingURL=type-guards.d.ts.map

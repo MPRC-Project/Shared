@@ -9,18 +9,18 @@ import net from "node:net";
 import dns from "node:dns";
 import { promisify } from "node:util";
 
-import type { MPRCCommand, MPRCCommandResponse } from "../index.js";
+import type { MPRCCommand, MPRCCommandResponse } from "../../index.js";
 import {
   MPRC_PORT,
   DEFAULT_TIMEOUT_MS,
   CONNECTION_TIMEOUT_MS,
-} from "../constants.js";
+} from "../../constants.js";
 import {
   NetworkError,
   DnsResolutionError,
   ConnectionError,
   TimeoutError,
-} from "../protocol/errors.js";
+} from "../errors.js";
 
 const resolve4Async = promisify(dns.resolve4);
 

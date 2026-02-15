@@ -11,6 +11,7 @@ import type {
   ReadMessageCommand,
   SendMessageCommand,
   VerifyProtocolCommand,
+  UserSignInCommand,
 } from "../index.js";
 
 import { MPRC_COMMAND_NAMES } from "../index.js";
@@ -64,8 +65,12 @@ export function isFindUserCommand(data: unknown): data is FindUserCommand {
   return (
     isMPRCCommand(data) &&
     data.command === "FIND_USER" &&
-    "email" in data &&
-    typeof (data as FindUserCommand).email === "string"
+    (("email" in data &&
+      typeof (data as FindUserCommand).email === "string" &&
+      (data as FindUserCommand).email !== "") ||
+      ("username" in data &&
+        typeof (data as FindUserCommand).username === "string" &&
+        (data as FindUserCommand).username !== ""))
   );
 }
 
@@ -194,5 +199,22 @@ export function isErrorResponse(data: unknown): data is MPRCErrorResponse {
     "responseId" in data &&
     "error" in data &&
     typeof (data as MPRCErrorResponse).error === "string"
+  );
+}
+
+/**
+ * Checks if the given data is a USER_SIGN_IN command.
+ *
+ * @param data - The data to check
+ * @returns True if the data is a UserSignInCommand
+ */
+export function isUserSignInCommand(data: unknown): data is UserSignInCommand {
+  return (
+    isMPRCCommand(data) &&
+    data.command === "USER_SIGN_IN" &&
+    "username" in data &&
+    typeof (data as any).username === "string" &&
+    "passwordHash" in data &&
+    typeof (data as any).passwordHash === "string"
   );
 }

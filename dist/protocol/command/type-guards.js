@@ -41,8 +41,12 @@ export function isVerifyCommand(data) {
 export function isFindUserCommand(data) {
     return (isMPRCCommand(data) &&
         data.command === "FIND_USER" &&
-        "email" in data &&
-        typeof data.email === "string");
+        (("email" in data &&
+            typeof data.email === "string" &&
+            data.email !== "") ||
+            ("username" in data &&
+                typeof data.username === "string" &&
+                data.username !== "")));
 }
 /**
  * Checks if the given data is a SEND_MESSAGE command.
@@ -136,5 +140,19 @@ export function isErrorResponse(data) {
         "responseId" in data &&
         "error" in data &&
         typeof data.error === "string");
+}
+/**
+ * Checks if the given data is a USER_SIGN_IN command.
+ *
+ * @param data - The data to check
+ * @returns True if the data is a UserSignInCommand
+ */
+export function isUserSignInCommand(data) {
+    return (isMPRCCommand(data) &&
+        data.command === "USER_SIGN_IN" &&
+        "username" in data &&
+        typeof data.username === "string" &&
+        "passwordHash" in data &&
+        typeof data.passwordHash === "string");
 }
 //# sourceMappingURL=type-guards.js.map

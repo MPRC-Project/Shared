@@ -1,4 +1,4 @@
-import type { AttachmentMetadata, FindUserCommand, ListMessagesCommand, LoadAttachmentCommand, Message, ReadMessageCommand, SendMessageCommand, VerifyProtocolCommand } from "../index.js";
+import type { AttachmentMetadata, FindUserCommand, ListMessagesCommand, LoadAttachmentCommand, Message, ReadMessageCommand, SendMessageCommand, UserSignInCommand, VerifyProtocolCommand } from "../index.js";
 /**
  * Creates a unique request ID for commands.
  *
@@ -14,10 +14,13 @@ export declare function createVerifyCommand(): VerifyProtocolCommand;
 /**
  * Creates a FIND_USER command.
  *
- * @param email - The email address to look up
+ * @param params - Object with either email or username
  * @returns A new FindUserCommand
  */
-export declare function createFindUserCommand(email: string): FindUserCommand;
+export declare function createFindUserCommand(params: {
+    email?: string;
+    username?: string;
+}): FindUserCommand;
 /**
  * Creates a SEND_MESSAGE command.
  *
@@ -62,4 +65,12 @@ export declare function createListMessagesCommand(email: string, options?: {
  * @returns A new LoadAttachmentCommand
  */
 export declare function createLoadAttachmentCommand(attachmentMetadata: AttachmentMetadata): Omit<LoadAttachmentCommand, "adminAuth">;
+/**
+ * Creates a USER_SIGN_IN command.
+ *
+ * @param username - The user's email or username
+ * @param passwordHash - The user's password hash
+ * @returns A new UserSignInCommand
+ */
+export declare function createUserSignInCommand(username: string, passwordHash: string): Omit<UserSignInCommand, "adminAuth">;
 //# sourceMappingURL=type-factory.d.ts.map

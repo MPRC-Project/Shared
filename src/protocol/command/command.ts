@@ -132,7 +132,9 @@ export interface VerifyProtocolCommandResponse extends BaseMPRCResponse {
 export interface FindUserCommand extends BaseMPRCCommand {
   command: "FIND_USER";
   /** Email address to look up */
-  email: string;
+  email?: string;
+  /** Username to look up */
+  username?: string;
 }
 
 /**
@@ -388,6 +390,56 @@ export interface LoadAttachmentCommandResponse extends BaseMPRCResponse {
 }
 
 // ============================================================================
+// User Management Commands
+// ============================================================================
+
+/**
+ * Command to create a new user account.
+ *
+ */
+export interface CreateUserCommand extends BaseMPRCCommand {
+  command: "CREATE_USER";
+  /** User's email address */
+  email: string;
+  /** User's display name */
+  username: string;
+  /** User's password hash (server will not store plaintext passwords) */
+  passwordHash: string;
+  /** Admin authentication (required) */
+  adminAuth: AdminAuthentication;
+}
+
+/**
+ * Response to the CREATE_USER command.
+ **/
+export interface CreateUserCommandResponse extends BaseMPRCResponse {
+  /** Whether the user creation was successful */
+  success: boolean;
+  /** Optional user ID of the newly created user */
+  userId?: string;
+}
+
+/**
+ * Command for user sign-in
+ */
+export interface UserSignInCommand extends BaseMPRCCommand {
+  command: "USER_SIGN_IN";
+  /** User's email address */
+  username?: string;
+  /** User's password hash */
+  passwordHash?: string;
+  /** Admin authentication (required) */
+  adminAuth?: AdminAuthentication;
+}
+
+export interface UserSignInCommandResponse extends BaseMPRCResponse {
+  /** Whether the sign-in was successful */
+  success: boolean;
+  /** Optional JWT token for authenticated sessions */
+  token?: string;
+}
+
+// ============================================================================
 // Future Commands (Prepared Interfaces)
 // ============================================================================
 
@@ -428,6 +480,8 @@ export const MPRC_COMMAND_NAMES = [
   "LIST_MESSAGES",
   "READ_MESSAGE",
   "LOAD_ATTACHMENT",
+  "CREATE_USER",
+  "USER_SIGN_IN",
   // "DELETE_MESSAGE",
 ] as const;
 
@@ -445,7 +499,9 @@ export type MPRCCommand =
   | SendMessageCommand
   | ListMessagesCommand
   | ReadMessageCommand
-  | LoadAttachmentCommand;
+  | LoadAttachmentCommand
+  | CreateUserCommand
+  | UserSignInCommand;
 // | DeleteMessageCommand;
 
 /**
@@ -458,5 +514,7 @@ export type MPRCCommandResponse =
   | MPRCErrorResponse
   | ListMessagesCommandResponse
   | ReadMessageCommandResponse
-  | LoadAttachmentCommandResponse;
+  | LoadAttachmentCommandResponse
+  | CreateUserCommandResponse
+  | UserSignInCommandResponse;
 // | DeleteMessageCommandResponse;

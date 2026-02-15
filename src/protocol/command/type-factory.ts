@@ -7,6 +7,7 @@ import type {
   Message,
   ReadMessageCommand,
   SendMessageCommand,
+  UserSignInCommand,
   VerifyProtocolCommand,
 } from "../index.js";
 import crypto from "node:crypto";
@@ -35,14 +36,17 @@ export function createVerifyCommand(): VerifyProtocolCommand {
 /**
  * Creates a FIND_USER command.
  *
- * @param email - The email address to look up
+ * @param params - Object with either email or username
  * @returns A new FindUserCommand
  */
-export function createFindUserCommand(email: string): FindUserCommand {
+export function createFindUserCommand(params: {
+  email?: string;
+  username?: string;
+}): FindUserCommand {
   return {
     command: "FIND_USER",
     requestId: createRequestId(),
-    email,
+    ...params,
   };
 }
 
@@ -127,5 +131,24 @@ export function createLoadAttachmentCommand(
     command: "LOAD_ATTACHMENT",
     requestId: createRequestId(),
     attachmentMetadata,
+  };
+}
+
+/**
+ * Creates a USER_SIGN_IN command.
+ *
+ * @param username - The user's email or username
+ * @param passwordHash - The user's password hash
+ * @returns A new UserSignInCommand
+ */
+export function createUserSignInCommand(
+  username: string,
+  passwordHash: string,
+): Omit<UserSignInCommand, "adminAuth"> {
+  return {
+    command: "USER_SIGN_IN",
+    requestId: createRequestId(),
+    username,
+    passwordHash,
   };
 }

@@ -11,6 +11,8 @@ export const MPRC_COMMAND_NAMES = [
     "LIST_MESSAGES",
     "READ_MESSAGE",
     "LOAD_ATTACHMENT",
+    "CREATE_USER",
+    "USER_SIGN_IN",
     // "DELETE_MESSAGE",
 ];
 // | DeleteMessageCommandResponse;
