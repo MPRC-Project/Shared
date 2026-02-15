@@ -446,3 +446,25 @@ export class SignatureTooOldError extends MPRCError {
     };
   }
 }
+
+/**
+ * Error thrown when a user provides an invalid password during sign-in.
+ */
+export class InvalidPasswordError extends MPRCError {
+  readonly code = "INVALID_PASSWORD";
+  readonly statusCode = 401;
+  /** The email address for which the password was invalid */
+  readonly email: string;
+
+  constructor(email: string) {
+    super(`Invalid password for user: ${email}`);
+    this.email = email;
+  }
+
+  toJSON(): Record<string, unknown> {
+    return {
+      ...super.toJSON(),
+      email: this.email,
+    };
+  }
+}

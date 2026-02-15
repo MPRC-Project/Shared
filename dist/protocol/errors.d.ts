@@ -227,4 +227,15 @@ export declare class SignatureTooOldError extends MPRCError {
     constructor(ageMs: number, maxAgeMs: number);
     toJSON(): Record<string, unknown>;
 }
+/**
+ * Error thrown when a user provides an invalid password during sign-in.
+ */
+export declare class InvalidPasswordError extends MPRCError {
+    readonly code = "INVALID_PASSWORD";
+    readonly statusCode = 401;
+    /** The email address for which the password was invalid */
+    readonly email: string;
+    constructor(email: string);
+    toJSON(): Record<string, unknown>;
+}
 //# sourceMappingURL=errors.d.ts.map
