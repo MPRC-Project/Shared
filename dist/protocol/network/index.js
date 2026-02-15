@@ -169,14 +169,25 @@ export class MPRCConnection {
                 this.socket?.removeListener("data", onData);
                 this.socket?.removeListener("error", onError);
             };
+            // Buffer for incoming data
+            let buffer = "";
             const onData = (data) => {
-                cleanup();
-                try {
-                    const response = JSON.parse(data.toString());
-                    resolve(response);
-                }
-                catch (err) {
-                    reject(new NetworkError("INVALID_RESPONSE", "Failed to parse server response as JSON"));
+                buffer += data.toString();
+                let newlineIndex;
+                while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
+                    const line = buffer.slice(0, newlineIndex).trim();
+                    buffer = buffer.slice(newlineIndex + 1);
+                    if (line.length === 0)
+                        continue;
+                    cleanup();
+                    try {
+                        const response = JSON.parse(line);
+                        resolve(response);
+                    }
+                    catch (err) {
+                        reject(new NetworkError("INVALID_RESPONSE", "Failed to parse server response as JSON"));
+                    }
+                    return; // Only expect one response per command
                 }
             };
             const onError = (err) => {
@@ -185,7 +196,8 @@ export class MPRCConnection {
             };
             this.socket.on("data", onData);
             this.socket.on("error", onError);
-            this.socket.write(JSON.stringify(command));
+            // Send JSON with newline delimiter
+            this.socket.write(JSON.stringify(command) + "\n");
             timeoutHandle = setTimeout(() => {
                 cleanup();
                 reject(new TimeoutError(`Response from ${this.host}:${this.port} timed out`, timeout));
