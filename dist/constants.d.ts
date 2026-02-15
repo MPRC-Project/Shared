@@ -17,11 +17,11 @@ export declare const MPRC_PROTOCOL_VERSION = "1.0.0";
 /**
  * Default timeout for network operations in milliseconds.
  */
-export declare const DEFAULT_TIMEOUT_MS = 30000;
+export declare const DEFAULT_TIMEOUT_MS = 60000;
 /**
  * Connection timeout for establishing new connections in milliseconds.
  */
-export declare const CONNECTION_TIMEOUT_MS = 10000;
+export declare const CONNECTION_TIMEOUT_MS = 15000;
 /**
  * Protocol identifier string returned during VERIFY handshake.
  */
