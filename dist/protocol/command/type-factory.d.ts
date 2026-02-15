@@ -16,9 +16,7 @@ export declare function createVerifyCommand(): VerifyProtocolCommand;
  * @param email - The email address to verify
  * @returns A new VerifyUserExistanceCommand
  */
-export declare function createVerifyUserExistanceCommand(params: {
-    email: string;
-}): VerifyUserExistanceCommand;
+export declare function createVerifyUserExistanceCommand(email: string): VerifyUserExistanceCommand;
 /**
  * Creates a SEND_MESSAGE command.
  *

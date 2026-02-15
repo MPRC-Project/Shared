@@ -6,8 +6,6 @@ export interface User {
   id: string;
   /** User's email address */
   email: string;
-  /** User's display name */
-  username: string;
   /** User's password hash */
   passwordHash: string;
   /** Account creation timestamp */

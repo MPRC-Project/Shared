@@ -23,11 +23,11 @@ export function createVerifyCommand() {
  * @param email - The email address to verify
  * @returns A new VerifyUserExistanceCommand
  */
-export function createVerifyUserExistanceCommand(params) {
+export function createVerifyUserExistanceCommand(email) {
     return {
         command: "VERIFY_USER_EXISTENCE",
         requestId: createRequestId(),
-        email: params.email,
+        email: email,
     };
 }
 /**

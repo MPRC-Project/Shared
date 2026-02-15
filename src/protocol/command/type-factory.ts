@@ -39,13 +39,13 @@ export function createVerifyCommand(): VerifyProtocolCommand {
  * @param email - The email address to verify
  * @returns A new VerifyUserExistanceCommand
  */
-export function createVerifyUserExistanceCommand(params: {
-  email: string;
-}): VerifyUserExistanceCommand {
+export function createVerifyUserExistanceCommand(
+  email: string,
+): VerifyUserExistanceCommand {
   return {
     command: "VERIFY_USER_EXISTENCE",
     requestId: createRequestId(),
-    email: params.email,
+    email: email,
   };
 }
 
