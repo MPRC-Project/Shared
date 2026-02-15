@@ -70,7 +70,7 @@ export declare function createLoadAttachmentCommand(attachmentMetadata: Attachme
  * @param passwordHash - The user's password hash
  * @returns A new UserSignInCommand
  */
-export declare function createUserSignInCommand(email: string, passwordHash: string): Omit<UserSignInCommand, "adminAuth">;
+export declare function createUserSignInCommand(email: string, password: string): Omit<UserSignInCommand, "adminAuth">;
 /**
  * Creates a CREATE_USER command.
  *

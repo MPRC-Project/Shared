@@ -148,13 +148,13 @@ export function createLoadAttachmentCommand(
  */
 export function createUserSignInCommand(
   email: string,
-  passwordHash: string,
+  password: string,
 ): Omit<UserSignInCommand, "adminAuth"> {
   return {
     command: "USER_SIGN_IN",
     requestId: createRequestId(),
     email,
-    passwordHash,
+    password,
   };
 }
 

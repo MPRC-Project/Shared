@@ -372,10 +372,10 @@ export interface UserSignInCommand extends BaseMPRCCommand {
     command: "USER_SIGN_IN";
     /** User's email address */
     email: string;
-    /** User's password hash */
-    passwordHash?: string;
+    /** User's password */
+    password: string;
     /** Admin authentication (required) */
-    adminAuth?: AdminAuthentication;
+    adminAuth: AdminAuthentication;
 }
 export interface UserSignInCommandResponse extends BaseMPRCResponse {
     /** Whether the sign-in was successful */

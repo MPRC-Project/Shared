@@ -103,12 +103,12 @@ export function createLoadAttachmentCommand(attachmentMetadata) {
  * @param passwordHash - The user's password hash
  * @returns A new UserSignInCommand
  */
-export function createUserSignInCommand(email, passwordHash) {
+export function createUserSignInCommand(email, password) {
     return {
         command: "USER_SIGN_IN",
         requestId: createRequestId(),
         email,
-        passwordHash,
+        password,
     };
 }
 /**
