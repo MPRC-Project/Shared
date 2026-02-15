@@ -1,4 +1,4 @@
-import type { AttachmentMetadata, FindUserCommand, ListMessagesCommand, LoadAttachmentCommand, Message, ReadMessageCommand, SendMessageCommand, UserSignInCommand, VerifyProtocolCommand } from "../index.js";
+import type { AttachmentMetadata, CreateUserCommand, ListMessagesCommand, LoadAttachmentCommand, Message, ReadMessageCommand, SendMessageCommand, UserSignInCommand, VerifyProtocolCommand, VerifyUserExistanceCommand } from "../index.js";
 /**
  * Creates a unique request ID for commands.
  *
@@ -12,15 +12,13 @@ export declare function createRequestId(): string;
  */
 export declare function createVerifyCommand(): VerifyProtocolCommand;
 /**
- * Creates a FIND_USER command.
- *
- * @param params - Object with either email or username
- * @returns A new FindUserCommand
+ * Creates a VERIFY_USER_EXISTENCE command.
+ * @param email - The email address to verify
+ * @returns A new VerifyUserExistanceCommand
  */
-export declare function createFindUserCommand(params: {
-    email?: string;
-    username?: string;
-}): FindUserCommand;
+export declare function createVerifyUserExistanceCommand(params: {
+    email: string;
+}): VerifyUserExistanceCommand;
 /**
  * Creates a SEND_MESSAGE command.
  *
@@ -68,9 +66,17 @@ export declare function createLoadAttachmentCommand(attachmentMetadata: Attachme
 /**
  * Creates a USER_SIGN_IN command.
  *
- * @param username - The user's email or username
+ * @param email - The user's email address
  * @param passwordHash - The user's password hash
  * @returns A new UserSignInCommand
  */
-export declare function createUserSignInCommand(username: string, passwordHash: string): Omit<UserSignInCommand, "adminAuth">;
+export declare function createUserSignInCommand(email: string, passwordHash: string): Omit<UserSignInCommand, "adminAuth">;
+/**
+ * Creates a CREATE_USER command.
+ *
+ * @param email - The new user's email address
+ * @param passwordHash - The new user's password hash
+ *
+ */
+export declare function createCreateUserCommand(email: string, passwordHash: string): Omit<CreateUserCommand, "adminAuth">;
 //# sourceMappingURL=type-factory.d.ts.map

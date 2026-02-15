@@ -13,9 +13,6 @@ import type { AdminAuthentication, MPRCCommand } from "./command/index.js";
 export interface AdminKeyConfig {
     /**
      * Human-readable name for this admin key.
-     * Used to identify which key is being used for authentication.
-     * This is distinct from user names (future user JWT auth will have usernames).
-     *
      * @example "primary-server", "backup-admin", "deployment-bot"
      */
     name: string;
@@ -102,7 +99,7 @@ export declare function findAdminKey(publicKey: string, adminKeys: AdminKeyConfi
 /**
  * Checks if a command requires admin authentication.
  *
- * VERIFY and FIND_USER commands do not require authentication.
+ * VERIFY and VERIFY_USER_EXISTENCE commands do not require authentication.
  * All other commands require admin authentication.
  *
  * @param command - The command to check

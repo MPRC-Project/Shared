@@ -6,7 +6,7 @@
  */
 export const MPRC_COMMAND_NAMES = [
     "VERIFY",
-    "FIND_USER",
+    "VERIFY_USER_EXISTENCE",
     "SEND_MESSAGE",
     "LIST_MESSAGES",
     "READ_MESSAGE",

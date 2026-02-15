@@ -100,28 +100,24 @@ export interface VerifyProtocolCommandResponse extends BaseMPRCResponse {
  *
  * @example
  * ```typescript
- * const command: FindUserCommand = {
- *   command: "FIND_USER",
+ * const command: VerifyUserExistance = {
+ *   command: "VERIFY_USER_EXISTENCE",
  *   requestId: crypto.randomUUID(),
  *   email: "user@example.com",
  * };
  * ```
  */
-export interface FindUserCommand extends BaseMPRCCommand {
-    command: "FIND_USER";
+export interface VerifyUserExistanceCommand extends BaseMPRCCommand {
+    command: "VERIFY_USER_EXISTENCE";
     /** Email address to look up */
-    email?: string;
-    /** Username to look up */
-    username?: string;
+    email: string;
 }
 /**
- * Response to the FIND_USER command.
+ * Response to the VERIFY_USER_EXISTENCE command.
  */
-export interface FindUserCommandResponse extends BaseMPRCResponse {
+export interface VerifyUserExistanceCommandResponse extends BaseMPRCResponse {
     /** Whether the user was found */
     found: boolean;
-    /** Optional username if found and public */
-    username?: string | undefined;
 }
 /**
  * Command to send a message to a recipient.
@@ -349,8 +345,6 @@ export interface CreateUserCommand extends BaseMPRCCommand {
     command: "CREATE_USER";
     /** User's email address */
     email: string;
-    /** User's display name */
-    username: string;
     /** User's password hash (server will not store plaintext passwords) */
     passwordHash: string;
     /** Admin authentication (required) */
@@ -371,7 +365,7 @@ export interface CreateUserCommandResponse extends BaseMPRCResponse {
 export interface UserSignInCommand extends BaseMPRCCommand {
     command: "USER_SIGN_IN";
     /** User's email address */
-    username?: string;
+    email: string;
     /** User's password hash */
     passwordHash?: string;
     /** Admin authentication (required) */
@@ -407,7 +401,7 @@ export interface DeleteMessageCommandResponse extends BaseMPRCResponse {
 /**
  * All valid MPRC command names.
  */
-export declare const MPRC_COMMAND_NAMES: readonly ["VERIFY", "FIND_USER", "SEND_MESSAGE", "LIST_MESSAGES", "READ_MESSAGE", "LOAD_ATTACHMENT", "CREATE_USER", "USER_SIGN_IN"];
+export declare const MPRC_COMMAND_NAMES: readonly ["VERIFY", "VERIFY_USER_EXISTENCE", "SEND_MESSAGE", "LIST_MESSAGES", "READ_MESSAGE", "LOAD_ATTACHMENT", "CREATE_USER", "USER_SIGN_IN"];
 /**
  * Type representing any valid MPRC command name.
  */
@@ -415,9 +409,9 @@ export type MPRCCommandName = (typeof MPRC_COMMAND_NAMES)[number];
 /**
  * Union type of all possible MPRC commands.
  */
-export type MPRCCommand = VerifyProtocolCommand | FindUserCommand | SendMessageCommand | ListMessagesCommand | ReadMessageCommand | LoadAttachmentCommand | CreateUserCommand | UserSignInCommand;
+export type MPRCCommand = VerifyProtocolCommand | VerifyUserExistanceCommand | SendMessageCommand | ListMessagesCommand | ReadMessageCommand | LoadAttachmentCommand | CreateUserCommand | UserSignInCommand;
 /**
  * Union type of all possible MPRC command responses.
  */
-export type MPRCCommandResponse = VerifyProtocolCommandResponse | FindUserCommandResponse | SendMessageCommandResponse | MPRCErrorResponse | ListMessagesCommandResponse | ReadMessageCommandResponse | LoadAttachmentCommandResponse | CreateUserCommandResponse | UserSignInCommandResponse;
+export type MPRCCommandResponse = VerifyProtocolCommandResponse | VerifyUserExistanceCommandResponse | SendMessageCommandResponse | MPRCErrorResponse | ListMessagesCommandResponse | ReadMessageCommandResponse | LoadAttachmentCommandResponse | CreateUserCommandResponse | UserSignInCommandResponse;
 //# sourceMappingURL=command.d.ts.map

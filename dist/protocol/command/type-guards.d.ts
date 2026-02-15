@@ -1,4 +1,4 @@
-import type { FindUserCommand, LoadAttachmentCommand, ListMessagesCommand, AttachmentMetadata, MPRCCommand, MPRCErrorResponse, Message, ReadMessageCommand, SendMessageCommand, VerifyProtocolCommand, UserSignInCommand } from "../index.js";
+import type { LoadAttachmentCommand, ListMessagesCommand, AttachmentMetadata, MPRCCommand, MPRCErrorResponse, Message, ReadMessageCommand, SendMessageCommand, VerifyProtocolCommand, UserSignInCommand, VerifyUserExistanceCommand } from "../index.js";
 /**
  * Checks if the given data is a valid MPRC command.
  *
@@ -28,7 +28,7 @@ export declare function isVerifyCommand(data: unknown): data is VerifyProtocolCo
  * @param data - The data to check
  * @returns True if the data is a FindUserCommand
  */
-export declare function isFindUserCommand(data: unknown): data is FindUserCommand;
+export declare function isFindUserCommand(data: unknown): data is VerifyUserExistanceCommand;
 /**
  * Checks if the given data is a SEND_MESSAGE command.
  *

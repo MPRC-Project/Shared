@@ -1,6 +1,5 @@
 import type {
   BaseMPRCCommand,
-  FindUserCommand,
   LoadAttachmentCommand,
   ListMessagesCommand,
   AttachmentMetadata,
@@ -12,6 +11,7 @@ import type {
   SendMessageCommand,
   VerifyProtocolCommand,
   UserSignInCommand,
+  VerifyUserExistanceCommand,
 } from "../index.js";
 
 import { MPRC_COMMAND_NAMES } from "../index.js";
@@ -61,16 +61,15 @@ export function isVerifyCommand(data: unknown): data is VerifyProtocolCommand {
  * @param data - The data to check
  * @returns True if the data is a FindUserCommand
  */
-export function isFindUserCommand(data: unknown): data is FindUserCommand {
+export function isFindUserCommand(
+  data: unknown,
+): data is VerifyUserExistanceCommand {
   return (
     isMPRCCommand(data) &&
-    data.command === "FIND_USER" &&
-    (("email" in data &&
-      typeof (data as FindUserCommand).email === "string" &&
-      (data as FindUserCommand).email !== "") ||
-      ("username" in data &&
-        typeof (data as FindUserCommand).username === "string" &&
-        (data as FindUserCommand).username !== ""))
+    data.command === "VERIFY_USER_EXISTENCE" &&
+    "email" in data &&
+    typeof (data as VerifyUserExistanceCommand).email === "string" &&
+    (data as VerifyUserExistanceCommand).email !== ""
   );
 }
 
@@ -212,8 +211,8 @@ export function isUserSignInCommand(data: unknown): data is UserSignInCommand {
   return (
     isMPRCCommand(data) &&
     data.command === "USER_SIGN_IN" &&
-    "username" in data &&
-    typeof (data as any).username === "string" &&
+    "email" in data &&
+    typeof (data as any).email === "string" &&
     "passwordHash" in data &&
     typeof (data as any).passwordHash === "string"
   );

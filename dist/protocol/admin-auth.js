@@ -143,14 +143,14 @@ export function findAdminKey(publicKey, adminKeys) {
 /**
  * Checks if a command requires admin authentication.
  *
- * VERIFY and FIND_USER commands do not require authentication.
+ * VERIFY and VERIFY_USER_EXISTENCE commands do not require authentication.
  * All other commands require admin authentication.
  *
  * @param command - The command to check
  * @returns True if the command requires admin authentication
  */
 export function requiresAdminAuth(command) {
-    return command.command !== "VERIFY" && command.command !== "FIND_USER";
+    return (command.command !== "VERIFY" && command.command !== "VERIFY_USER_EXISTENCE");
 }
 /**
  * Validates that a command has admin authentication if required.

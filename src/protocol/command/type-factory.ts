@@ -1,7 +1,7 @@
 import type {
   AdminAuthentication,
   AttachmentMetadata,
-  FindUserCommand,
+  CreateUserCommand,
   ListMessagesCommand,
   LoadAttachmentCommand,
   Message,
@@ -9,6 +9,7 @@ import type {
   SendMessageCommand,
   UserSignInCommand,
   VerifyProtocolCommand,
+  VerifyUserExistanceCommand,
 } from "../index.js";
 import crypto from "node:crypto";
 
@@ -34,19 +35,17 @@ export function createVerifyCommand(): VerifyProtocolCommand {
 }
 
 /**
- * Creates a FIND_USER command.
- *
- * @param params - Object with either email or username
- * @returns A new FindUserCommand
+ * Creates a VERIFY_USER_EXISTENCE command.
+ * @param email - The email address to verify
+ * @returns A new VerifyUserExistanceCommand
  */
-export function createFindUserCommand(params: {
-  email?: string;
-  username?: string;
-}): FindUserCommand {
+export function createVerifyUserExistanceCommand(params: {
+  email: string;
+}): VerifyUserExistanceCommand {
   return {
-    command: "FIND_USER",
+    command: "VERIFY_USER_EXISTENCE",
     requestId: createRequestId(),
-    ...params,
+    email: params.email,
   };
 }
 
@@ -137,18 +136,37 @@ export function createLoadAttachmentCommand(
 /**
  * Creates a USER_SIGN_IN command.
  *
- * @param username - The user's email or username
+ * @param email - The user's email address
  * @param passwordHash - The user's password hash
  * @returns A new UserSignInCommand
  */
 export function createUserSignInCommand(
-  username: string,
+  email: string,
   passwordHash: string,
 ): Omit<UserSignInCommand, "adminAuth"> {
   return {
     command: "USER_SIGN_IN",
     requestId: createRequestId(),
-    username,
+    email,
+    passwordHash,
+  };
+}
+
+/**
+ * Creates a CREATE_USER command.
+ *
+ * @param email - The new user's email address
+ * @param passwordHash - The new user's password hash
+ *
+ */
+export function createCreateUserCommand(
+  email: string,
+  passwordHash: string,
+): Omit<CreateUserCommand, "adminAuth"> {
+  return {
+    command: "CREATE_USER",
+    requestId: createRequestId(),
+    email,
     passwordHash,
   };
 }

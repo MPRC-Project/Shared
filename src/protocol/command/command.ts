@@ -122,29 +122,25 @@ export interface VerifyProtocolCommandResponse extends BaseMPRCResponse {
  *
  * @example
  * ```typescript
- * const command: FindUserCommand = {
- *   command: "FIND_USER",
+ * const command: VerifyUserExistance = {
+ *   command: "VERIFY_USER_EXISTENCE",
  *   requestId: crypto.randomUUID(),
  *   email: "user@example.com",
  * };
  * ```
  */
-export interface FindUserCommand extends BaseMPRCCommand {
-  command: "FIND_USER";
+export interface VerifyUserExistanceCommand extends BaseMPRCCommand {
+  command: "VERIFY_USER_EXISTENCE";
   /** Email address to look up */
-  email?: string;
-  /** Username to look up */
-  username?: string;
+  email: string;
 }
 
 /**
- * Response to the FIND_USER command.
+ * Response to the VERIFY_USER_EXISTENCE command.
  */
-export interface FindUserCommandResponse extends BaseMPRCResponse {
+export interface VerifyUserExistanceCommandResponse extends BaseMPRCResponse {
   /** Whether the user was found */
   found: boolean;
-  /** Optional username if found and public */
-  username?: string | undefined;
 }
 
 // ============================================================================
@@ -401,8 +397,6 @@ export interface CreateUserCommand extends BaseMPRCCommand {
   command: "CREATE_USER";
   /** User's email address */
   email: string;
-  /** User's display name */
-  username: string;
   /** User's password hash (server will not store plaintext passwords) */
   passwordHash: string;
   /** Admin authentication (required) */
@@ -425,7 +419,7 @@ export interface CreateUserCommandResponse extends BaseMPRCResponse {
 export interface UserSignInCommand extends BaseMPRCCommand {
   command: "USER_SIGN_IN";
   /** User's email address */
-  username?: string;
+  email: string;
   /** User's password hash */
   passwordHash?: string;
   /** Admin authentication (required) */
@@ -475,7 +469,7 @@ export interface DeleteMessageCommandResponse extends BaseMPRCResponse {
  */
 export const MPRC_COMMAND_NAMES = [
   "VERIFY",
-  "FIND_USER",
+  "VERIFY_USER_EXISTENCE",
   "SEND_MESSAGE",
   "LIST_MESSAGES",
   "READ_MESSAGE",
@@ -495,7 +489,7 @@ export type MPRCCommandName = (typeof MPRC_COMMAND_NAMES)[number];
  */
 export type MPRCCommand =
   | VerifyProtocolCommand
-  | FindUserCommand
+  | VerifyUserExistanceCommand
   | SendMessageCommand
   | ListMessagesCommand
   | ReadMessageCommand
@@ -509,7 +503,7 @@ export type MPRCCommand =
  */
 export type MPRCCommandResponse =
   | VerifyProtocolCommandResponse
-  | FindUserCommandResponse
+  | VerifyUserExistanceCommandResponse
   | SendMessageCommandResponse
   | MPRCErrorResponse
   | ListMessagesCommandResponse
