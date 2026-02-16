@@ -16,5 +16,9 @@ export interface JWTToken {
     token: string;
     /** Expiration date of the token */
     expiresAt: Date;
+    /** Refresh token for obtaining new JWT tokens */
+    refreshToken: string;
+    /** Expiration date of the refresh token */
+    refreshTokenExpiresAt: Date;
 }
 //# sourceMappingURL=user.d.ts.map

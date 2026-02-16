@@ -44,7 +44,6 @@ export function extractDomainFromEmail(email) {
  * ```
  */
 export async function resolveDomain(domain) {
-    // Only resolve IPv4 addresses
     try {
         const addresses = await resolve4Async(domain);
         if (addresses.length === 0) {
