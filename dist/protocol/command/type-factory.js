@@ -117,6 +117,8 @@ export function createUserSignInCommand(email, password) {
  * @param email - The new user's email address
  * @param passwordHash - The new user's password hash
  *
+ * @return A new CreateUserCommand
+ *
  */
 export function createCreateUserCommand(email, passwordHash) {
     return {
@@ -124,6 +126,20 @@ export function createCreateUserCommand(email, passwordHash) {
         requestId: createRequestId(),
         email,
         passwordHash,
+    };
+}
+/**
+ *
+ * Creates a REFRESH_USER_SESSION command.
+ *
+ * @param refreshToken
+ * @returns a new RefreshUserSessionCommand
+ */
+export function createRefreshUserSessionCommand(refreshToken) {
+    return {
+        command: "REFRESH_USER_SESSION",
+        requestId: createRequestId(),
+        refreshToken,
     };
 }
 //# sourceMappingURL=type-factory.js.map

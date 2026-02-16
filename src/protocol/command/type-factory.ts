@@ -6,6 +6,7 @@ import type {
   LoadAttachmentCommand,
   Message,
   ReadMessageCommand,
+  RefreshUserSessionCommand,
   SendMessageCommand,
   UserSignInCommand,
   VerifyProtocolCommand,
@@ -164,6 +165,8 @@ export function createUserSignInCommand(
  * @param email - The new user's email address
  * @param passwordHash - The new user's password hash
  *
+ * @return A new CreateUserCommand
+ *
  */
 export function createCreateUserCommand(
   email: string,
@@ -174,5 +177,22 @@ export function createCreateUserCommand(
     requestId: createRequestId(),
     email,
     passwordHash,
+  };
+}
+
+/**
+ *
+ * Creates a REFRESH_USER_SESSION command.
+ *
+ * @param refreshToken
+ * @returns a new RefreshUserSessionCommand
+ */
+export function createRefreshUserSessionCommand(
+  refreshToken: string,
+): Omit<RefreshUserSessionCommand, "adminAuth"> {
+  return {
+    command: "REFRESH_USER_SESSION",
+    requestId: createRequestId(),
+    refreshToken,
   };
 }

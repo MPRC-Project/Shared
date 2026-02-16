@@ -384,6 +384,26 @@ export interface UserSignInCommandResponse extends BaseMPRCResponse {
     token?: JWTToken;
 }
 /**
+ * Command to refresh user session using a refresh token.
+ * Allows clients to obtain a new JWT token without re-entering credentials.
+ */
+export interface RefreshUserSessionCommand extends BaseMPRCCommand {
+    command: "REFRESH_USER_SESSION";
+    /** User's refresh token */
+    refreshToken: string;
+    /** Admin authentication (required) */
+    adminAuth: AdminAuthentication;
+}
+/**
+ * Response to the REFRESH_USER_SESSION command.
+ */
+export interface RefreshUserSessionCommandResponse extends BaseMPRCResponse {
+    /** Whether the session refresh was successful */
+    success: boolean;
+    /** Optional new JWT token for authenticated sessions */
+    token?: JWTToken;
+}
+/**
  * Command to delete a message.
  * @future This command is planned for future implementation.
  */
@@ -407,7 +427,7 @@ export interface DeleteMessageCommandResponse extends BaseMPRCResponse {
 /**
  * All valid MPRC command names.
  */
-export declare const MPRC_COMMAND_NAMES: readonly ["VERIFY", "VERIFY_USER_EXISTENCE", "SEND_MESSAGE", "LIST_MESSAGES", "READ_MESSAGE", "LOAD_ATTACHMENT", "CREATE_USER", "USER_SIGN_IN"];
+export declare const MPRC_COMMAND_NAMES: readonly ["VERIFY", "VERIFY_USER_EXISTENCE", "SEND_MESSAGE", "LIST_MESSAGES", "READ_MESSAGE", "LOAD_ATTACHMENT", "CREATE_USER", "USER_SIGN_IN", "REFRESH_USER_SESSION"];
 /**
  * Type representing any valid MPRC command name.
  */
@@ -415,9 +435,9 @@ export type MPRCCommandName = (typeof MPRC_COMMAND_NAMES)[number];
 /**
  * Union type of all possible MPRC commands.
  */
-export type MPRCCommand = VerifyProtocolCommand | VerifyUserExistanceCommand | SendMessageCommand | ListMessagesCommand | ReadMessageCommand | LoadAttachmentCommand | CreateUserCommand | UserSignInCommand;
+export type MPRCCommand = VerifyProtocolCommand | VerifyUserExistanceCommand | SendMessageCommand | ListMessagesCommand | ReadMessageCommand | LoadAttachmentCommand | CreateUserCommand | UserSignInCommand | RefreshUserSessionCommand;
 /**
  * Union type of all possible MPRC command responses.
  */
-export type MPRCCommandResponse = VerifyProtocolCommandResponse | VerifyUserExistanceCommandResponse | SendMessageCommandResponse | MPRCErrorResponse | ListMessagesCommandResponse | ReadMessageCommandResponse | LoadAttachmentCommandResponse | CreateUserCommandResponse | UserSignInCommandResponse;
+export type MPRCCommandResponse = VerifyProtocolCommandResponse | VerifyUserExistanceCommandResponse | SendMessageCommandResponse | MPRCErrorResponse | ListMessagesCommandResponse | ReadMessageCommandResponse | LoadAttachmentCommandResponse | CreateUserCommandResponse | UserSignInCommandResponse | RefreshUserSessionCommandResponse;
 //# sourceMappingURL=command.d.ts.map

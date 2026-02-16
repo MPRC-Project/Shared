@@ -439,6 +439,28 @@ export interface UserSignInCommandResponse extends BaseMPRCResponse {
   token?: JWTToken;
 }
 
+/**
+ * Command to refresh user session using a refresh token.
+ * Allows clients to obtain a new JWT token without re-entering credentials.
+ */
+export interface RefreshUserSessionCommand extends BaseMPRCCommand {
+  command: "REFRESH_USER_SESSION";
+  /** User's refresh token */
+  refreshToken: string;
+  /** Admin authentication (required) */
+  adminAuth: AdminAuthentication;
+}
+
+/**
+ * Response to the REFRESH_USER_SESSION command.
+ */
+export interface RefreshUserSessionCommandResponse extends BaseMPRCResponse {
+  /** Whether the session refresh was successful */
+  success: boolean;
+  /** Optional new JWT token for authenticated sessions */
+  token?: JWTToken;
+}
+
 // ============================================================================
 // Future Commands (Prepared Interfaces)
 // ============================================================================
@@ -482,6 +504,7 @@ export const MPRC_COMMAND_NAMES = [
   "LOAD_ATTACHMENT",
   "CREATE_USER",
   "USER_SIGN_IN",
+  "REFRESH_USER_SESSION",
   // "DELETE_MESSAGE",
 ] as const;
 
@@ -501,7 +524,8 @@ export type MPRCCommand =
   | ReadMessageCommand
   | LoadAttachmentCommand
   | CreateUserCommand
-  | UserSignInCommand;
+  | UserSignInCommand
+  | RefreshUserSessionCommand;
 // | DeleteMessageCommand;
 
 /**
@@ -516,5 +540,6 @@ export type MPRCCommandResponse =
   | ReadMessageCommandResponse
   | LoadAttachmentCommandResponse
   | CreateUserCommandResponse
-  | UserSignInCommandResponse;
+  | UserSignInCommandResponse
+  | RefreshUserSessionCommandResponse;
 // | DeleteMessageCommandResponse;

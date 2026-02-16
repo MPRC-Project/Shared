@@ -1,4 +1,4 @@
-import type { AttachmentMetadata, CreateUserCommand, ListMessagesCommand, LoadAttachmentCommand, Message, ReadMessageCommand, SendMessageCommand, UserSignInCommand, VerifyProtocolCommand, VerifyUserExistanceCommand } from "../index.js";
+import type { AttachmentMetadata, CreateUserCommand, ListMessagesCommand, LoadAttachmentCommand, Message, ReadMessageCommand, RefreshUserSessionCommand, SendMessageCommand, UserSignInCommand, VerifyProtocolCommand, VerifyUserExistanceCommand } from "../index.js";
 import type { JWTToken } from "../user/user.js";
 /**
  * Creates a unique request ID for commands.
@@ -77,6 +77,16 @@ export declare function createUserSignInCommand(email: string, password: string)
  * @param email - The new user's email address
  * @param passwordHash - The new user's password hash
  *
+ * @return A new CreateUserCommand
+ *
  */
 export declare function createCreateUserCommand(email: string, passwordHash: string): Omit<CreateUserCommand, "adminAuth">;
+/**
+ *
+ * Creates a REFRESH_USER_SESSION command.
+ *
+ * @param refreshToken
+ * @returns a new RefreshUserSessionCommand
+ */
+export declare function createRefreshUserSessionCommand(refreshToken: string): Omit<RefreshUserSessionCommand, "adminAuth">;
 //# sourceMappingURL=type-factory.d.ts.map

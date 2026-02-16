@@ -1,4 +1,4 @@
-import type { LoadAttachmentCommand, ListMessagesCommand, AttachmentMetadata, MPRCCommand, MPRCErrorResponse, Message, ReadMessageCommand, SendMessageCommand, VerifyProtocolCommand, UserSignInCommand, VerifyUserExistanceCommand } from "../index.js";
+import type { LoadAttachmentCommand, ListMessagesCommand, AttachmentMetadata, MPRCCommand, MPRCErrorResponse, Message, ReadMessageCommand, SendMessageCommand, VerifyProtocolCommand, UserSignInCommand, VerifyUserExistanceCommand, RefreshUserSessionCommand } from "../index.js";
 /**
  * Checks if the given data is a valid MPRC command.
  *
@@ -86,4 +86,11 @@ export declare function isErrorResponse(data: unknown): data is MPRCErrorRespons
  * @returns True if the data is a UserSignInCommand
  */
 export declare function isUserSignInCommand(data: unknown): data is UserSignInCommand;
+/**
+ * Checks if the given data is a REFRESH_USER_SESSION command.
+ *
+ * @param data - The data to check
+ * @returns True if the data is a RefreshUserSessionCommand
+ */
+export declare function isRefreshUserSessionCommand(data: unknown): data is RefreshUserSessionCommand;
 //# sourceMappingURL=type-guards.d.ts.map

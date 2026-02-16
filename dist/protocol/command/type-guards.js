@@ -149,4 +149,16 @@ export function isUserSignInCommand(data) {
         "passwordHash" in data &&
         typeof data.passwordHash === "string");
 }
+/**
+ * Checks if the given data is a REFRESH_USER_SESSION command.
+ *
+ * @param data - The data to check
+ * @returns True if the data is a RefreshUserSessionCommand
+ */
+export function isRefreshUserSessionCommand(data) {
+    return (isMPRCCommand(data) &&
+        data.command === "REFRESH_USER_SESSION" &&
+        "refreshToken" in data &&
+        typeof data.refreshToken === "string");
+}
 //# sourceMappingURL=type-guards.js.map

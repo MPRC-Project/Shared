@@ -12,6 +12,7 @@ import type {
   VerifyProtocolCommand,
   UserSignInCommand,
   VerifyUserExistanceCommand,
+  RefreshUserSessionCommand,
 } from "../index.js";
 
 import { MPRC_COMMAND_NAMES } from "../index.js";
@@ -210,5 +211,23 @@ export function isUserSignInCommand(data: unknown): data is UserSignInCommand {
     typeof (data as any).email === "string" &&
     "passwordHash" in data &&
     typeof (data as any).passwordHash === "string"
+  );
+}
+
+/**
+ * Checks if the given data is a REFRESH_USER_SESSION command.
+ *
+ * @param data - The data to check
+ * @returns True if the data is a RefreshUserSessionCommand
+ */
+
+export function isRefreshUserSessionCommand(
+  data: unknown,
+): data is RefreshUserSessionCommand {
+  return (
+    isMPRCCommand(data) &&
+    data.command === "REFRESH_USER_SESSION" &&
+    "refreshToken" in data &&
+    typeof (data as any).refreshToken === "string"
   );
 }
