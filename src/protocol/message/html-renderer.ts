@@ -209,10 +209,10 @@ function renderImageElement(
       if (attachment.content) {
         src = `data:${attachment.mimeType};base64,${attachment.content}`;
       } else {
-        src = `attachment://${attachment.id}`;
+        src = `cid:${attachment.id}`;
       }
     } else {
-      src = `attachment://${element.attachmentId}`;
+      src = `cid:${element.attachmentId}`;
     }
   }
 
