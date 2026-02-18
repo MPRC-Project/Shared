@@ -284,6 +284,22 @@ export class MessageDeliveryError extends MPRCError {
         };
     }
 }
+export class MessageValidationError extends MPRCError {
+    code = "MESSAGE_VALIDATION_FAILED";
+    statusCode = 400;
+    /** Detailed validation errors, if available */
+    details;
+    constructor(message, details) {
+        super(message);
+        this.details = details;
+    }
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            details: this.details,
+        };
+    }
+}
 /**
  * Error thrown when admin authentication is required but not provided.
  */
