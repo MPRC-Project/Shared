@@ -333,6 +333,25 @@ export class MessageDeliveryError extends MPRCError {
   }
 }
 
+export class MessageValidationError extends MPRCError {
+  readonly code = "MESSAGE_VALIDATION_FAILED";
+  readonly statusCode = 400;
+  /** Detailed validation errors, if available */
+  readonly details?: any;
+
+  constructor(message: string, details?: Record<string, unknown>) {
+    super(message);
+    this.details = details;
+  }
+
+  toJSON(): Record<string, unknown> {
+    return {
+      ...super.toJSON(),
+      details: this.details,
+    };
+  }
+}
+
 /**
  * Error thrown when admin authentication is required but not provided.
  */
