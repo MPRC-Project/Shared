@@ -3,9 +3,12 @@
  *
  * Shared networking functionality for DNS resolution and TCP communication.
  * Used by both client and server components to eliminate code duplication.
+ *
+ * Supports both plain TCP and TLS-encrypted connections for secure communication.
  */
 
 import net from "node:net";
+import tls from "node:tls";
 import dns from "node:dns";
 import { promisify } from "node:util";
 
@@ -37,6 +40,68 @@ export interface DnsResolutionResult {
 }
 
 /**
+ * TLS configuration options for secure connections.
+ *
+ * @example
+ * ```typescript
+ * const tlsOptions: TLSOptions = {
+ *   enabled: true,
+ *   rejectUnauthorized: false, // For self-signed certs
+ * };
+ * ```
+ */
+export interface TLSOptions {
+  /**
+   * Whether to enable TLS encryption.
+   * When true, uses tls.connect() instead of net.connect().
+   * @default false
+   */
+  enabled: boolean;
+
+  /**
+   * Whether to verify the server certificate.
+   * Set to false for self-signed certificates in development.
+   * @default true
+   */
+  rejectUnauthorized?: boolean;
+
+  /**
+   * Custom CA certificate(s) to trust.
+   * Useful for self-signed or internal CA certificates.
+   */
+  ca?: string | Buffer | Array<string | Buffer>;
+
+  /**
+   * Client certificate for mutual TLS authentication.
+   */
+  cert?: string | Buffer | Array<string | Buffer>;
+
+  /**
+   * Client private key for mutual TLS authentication.
+   */
+  key?: string | Buffer | Array<Buffer>;
+
+  /**
+   * Minimum TLS version to allow.
+   * @example "TLSv1.2", "TLSv1.3"
+   * @default "TLSv1.2"
+   */
+  minVersion?: string;
+
+  /**
+   * Maximum TLS version to allow.
+   * @example "TLSv1.3"
+   */
+  maxVersion?: string;
+
+  /**
+   * Server name indication (SNI) hostname.
+   * Usually set automatically from the connection host.
+   */
+  servername?: string;
+}
+
+/**
  * Options for TCP connection operations.
  */
 export interface ConnectionOptions {
@@ -46,6 +111,8 @@ export interface ConnectionOptions {
   port?: number;
   /** Connection timeout in milliseconds */
   timeout?: number;
+  /** Optional TLS configuration for encrypted connections */
+  tls?: TLSOptions;
 }
 
 /**
@@ -153,15 +220,30 @@ export async function resolveEmailToServerAddress(
 }
 
 /**
- * Managed TCP connection wrapper for MPRC protocol communication.
+ * Managed TCP/TLS connection wrapper for MPRC protocol communication.
  *
  * Provides a higher-level API for connecting to MPRC servers,
  * sending commands, and handling responses with proper cleanup.
+ *
+ * Supports both plain TCP and TLS-encrypted connections.
+ *
+ * @example
+ * ```typescript
+ * // Plain TCP connection
+ * const conn = new MPRCConnection({ host: "192.168.1.1" });
+ *
+ * // TLS-encrypted connection
+ * const secureCon = new MPRCConnection({
+ *   host: "mail.example.com",
+ *   tls: { enabled: true, rejectUnauthorized: true }
+ * });
+ * ```
  */
 export class MPRCConnection {
-  private socket: net.Socket | null = null;
+  private socket: net.Socket | tls.TLSSocket | null = null;
   private host: string;
   private port: number;
+  private tlsOptions?: TLSOptions | undefined;
   private connected: boolean = false;
 
   /**
@@ -172,10 +254,11 @@ export class MPRCConnection {
   constructor(options: ConnectionOptions) {
     this.host = options.host;
     this.port = options.port ?? MPRC_PORT;
+    this.tlsOptions = options.tls;
   }
 
   /**
-   * Establishes a TCP connection to the target server.
+   * Establishes a TCP or TLS connection to the target server.
    *
    * @param timeout - Connection timeout in milliseconds
    * @returns Promise that resolves when connected
@@ -184,7 +267,6 @@ export class MPRCConnection {
    */
   async connect(timeout: number = CONNECTION_TIMEOUT_MS): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.socket = new net.Socket();
       let timeoutHandle: NodeJS.Timeout | null = null;
 
       const cleanup = (error?: Error) => {
@@ -200,19 +282,57 @@ export class MPRCConnection {
         }
       };
 
-      this.socket.connect(this.port, this.host, () => {
-        if (timeoutHandle) {
-          clearTimeout(timeoutHandle);
-          timeoutHandle = null;
+      // Determine if we should use TLS
+      const useTLS = this.tlsOptions?.enabled ?? false;
+
+      if (useTLS) {
+        // Create TLS connection
+        const tlsConnectOptions: tls.ConnectionOptions = {
+          host: this.host,
+          port: this.port,
+          rejectUnauthorized: this.tlsOptions?.rejectUnauthorized ?? true,
+          minVersion: this.tlsOptions?.minVersion as any,
+          maxVersion: this.tlsOptions?.maxVersion as any,
+          servername: this.tlsOptions?.servername ?? this.host,
+        };
+
+        // Add optional TLS parameters
+        if (this.tlsOptions?.ca) {
+          tlsConnectOptions.ca = this.tlsOptions.ca;
         }
-        this.connected = true;
-        resolve();
-      });
+        if (this.tlsOptions?.cert) {
+          tlsConnectOptions.cert = this.tlsOptions.cert;
+        }
+        if (this.tlsOptions?.key) {
+          tlsConnectOptions.key = this.tlsOptions.key;
+        }
+
+        this.socket = tls.connect(tlsConnectOptions, () => {
+          if (timeoutHandle) {
+            clearTimeout(timeoutHandle);
+            timeoutHandle = null;
+          }
+          this.connected = true;
+          resolve();
+        });
+      } else {
+        // Create plain TCP connection
+        this.socket = new net.Socket();
+        this.socket.connect(this.port, this.host, () => {
+          if (timeoutHandle) {
+            clearTimeout(timeoutHandle);
+            timeoutHandle = null;
+          }
+          this.connected = true;
+          resolve();
+        });
+      }
 
       this.socket.on("error", (err) => {
+        const protocol = useTLS ? "TLS" : "TCP";
         cleanup(
           new ConnectionError(
-            `Failed to connect to ${this.host}:${this.port}`,
+            `Failed to connect to ${this.host}:${this.port} (${protocol})`,
             this.host,
             this.port,
             err,
@@ -221,9 +341,10 @@ export class MPRCConnection {
       });
 
       timeoutHandle = setTimeout(() => {
+        const protocol = useTLS ? "TLS" : "TCP";
         cleanup(
           new TimeoutError(
-            `Connection to ${this.host}:${this.port} timed out`,
+            `Connection to ${this.host}:${this.port} timed out (${protocol})`,
             timeout,
           ),
         );
@@ -342,6 +463,13 @@ export class MPRCConnection {
   }
 
   /**
+   * Returns whether this connection is using TLS encryption.
+   */
+  isSecure(): boolean {
+    return this.tlsOptions?.enabled ?? false;
+  }
+
+  /**
    * Returns the target host address.
    */
   getHost(): string {
@@ -354,6 +482,19 @@ export class MPRCConnection {
   getPort(): number {
     return this.port;
   }
+
+  /**
+   * Returns TLS connection information if using TLS.
+   * Useful for debugging certificate issues.
+   */
+  getTLSInfo(): tls.TLSSocket["getPeerCertificate"] | null {
+    if (this.socket && this.socket instanceof tls.TLSSocket) {
+      if ("getPeerCertificate" in this.socket) {
+        return this.socket.getPeerCertificate.bind(this.socket);
+      }
+    }
+    return null;
+  }
 }
 
 /**
@@ -362,6 +503,8 @@ export class MPRCConnection {
  * This is a convenience function for one-off requests. It handles
  * connection establishment, command sending, and cleanup automatically.
  *
+ * Supports both plain TCP and TLS-encrypted connections.
+ *
  * @param host - Target server host address
  * @param command - The MPRC command to send
  * @param options - Optional connection and timeout settings
@@ -369,9 +512,17 @@ export class MPRCConnection {
  *
  * @example
  * ```typescript
+ * // Plain TCP
  * const response = await sendSingleCommand<VerifyProtocolCommandResponse>(
  *   "192.168.1.1",
  *   { command: "VERIFY", requestId: crypto.randomUUID() }
+ * );
+ *
+ * // TLS-encrypted
+ * const secureResponse = await sendSingleCommand<VerifyProtocolCommandResponse>(
+ *   "mail.example.com",
+ *   { command: "VERIFY", requestId: crypto.randomUUID() },
+ *   { tls: { enabled: true } }
  * );
  * ```
  */
@@ -383,6 +534,7 @@ export async function sendSingleCommand<T extends MPRCCommandResponse>(
   const connection = new MPRCConnection({
     host,
     port: options.port ?? MPRC_PORT,
+    tls: options.tls || { enabled: false },
   });
 
   try {
