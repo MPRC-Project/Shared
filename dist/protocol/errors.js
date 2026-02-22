@@ -411,6 +411,22 @@ export class InvalidPasswordError extends MPRCError {
         };
     }
 }
+export class UserAlreadyExistsError extends MPRCError {
+    code = "USER_ALREADY_EXISTS";
+    statusCode = 409;
+    /** The email address that already exists */
+    email;
+    constructor(email) {
+        super(`User already exists with email: ${email}`);
+        this.email = email;
+    }
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            email: this.email,
+        };
+    }
+}
 /**
  * Error thrown when a JWT token is invalid (e.g. expired, malformed).
  */

@@ -30,7 +30,6 @@
     "generate-keys": "node scripts/generate-admin-keys.js",
     "generate-keys:rsa": "node scripts/generate-admin-keys.js",
     "generate-keys:ed25519": "node scripts/generate-admin-keys.js"
-    
   },
   "keywords": [
     "mprc",
@@ -51,5 +50,8 @@
   "devDependencies": {
     "@types/node": "^22.0.0",
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "mongodb": "^7.1.0"
   }
 }
