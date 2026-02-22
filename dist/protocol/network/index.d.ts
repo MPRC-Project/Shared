@@ -3,7 +3,10 @@
  *
  * Shared networking functionality for DNS resolution and TCP communication.
  * Used by both client and server components to eliminate code duplication.
+ *
+ * Supports both plain TCP and TLS-encrypted connections for secure communication.
  */
+import tls from "node:tls";
 import type { MPRCCommand, MPRCCommandResponse } from "../../index.js";
 /**
  * Result of a DNS resolution operation.
@@ -17,6 +20,60 @@ export interface DnsResolutionResult {
     primaryAddress: string;
 }
 /**
+ * TLS configuration options for secure connections.
+ *
+ * @example
+ * ```typescript
+ * const tlsOptions: TLSOptions = {
+ *   enabled: true,
+ *   rejectUnauthorized: false, // For self-signed certs
+ * };
+ * ```
+ */
+export interface TLSOptions {
+    /**
+     * Whether to enable TLS encryption.
+     * When true, uses tls.connect() instead of net.connect().
+     * @default false
+     */
+    enabled: boolean;
+    /**
+     * Whether to verify the server certificate.
+     * Set to false for self-signed certificates in development.
+     * @default true
+     */
+    rejectUnauthorized?: boolean;
+    /**
+     * Custom CA certificate(s) to trust.
+     * Useful for self-signed or internal CA certificates.
+     */
+    ca?: string | Buffer | Array<string | Buffer>;
+    /**
+     * Client certificate for mutual TLS authentication.
+     */
+    cert?: string | Buffer | Array<string | Buffer>;
+    /**
+     * Client private key for mutual TLS authentication.
+     */
+    key?: string | Buffer | Array<Buffer>;
+    /**
+     * Minimum TLS version to allow.
+     * @example "TLSv1.2", "TLSv1.3"
+     * @default "TLSv1.2"
+     */
+    minVersion?: string;
+    /**
+     * Maximum TLS version to allow.
+     * @example "TLSv1.3"
+     */
+    maxVersion?: string;
+    /**
+     * Server name indication (SNI) hostname.
+     * Usually set automatically from the connection host.
+     */
+    servername?: string;
+}
+/**
  * Options for TCP connection operations.
  */
 export interface ConnectionOptions {
@@ -26,6 +83,8 @@ export interface ConnectionOptions {
     port?: number;
     /** Connection timeout in milliseconds */
     timeout?: number;
+    /** Optional TLS configuration for encrypted connections */
+    tls?: TLSOptions;
 }
 /**
  * Options for sending commands over TCP.
@@ -83,15 +142,30 @@ export declare function resolveDomain(domain: string): Promise<DnsResolutionResu
  */
 export declare function resolveEmailToServerAddress(email: string): Promise<string>;
 /**
- * Managed TCP connection wrapper for MPRC protocol communication.
+ * Managed TCP/TLS connection wrapper for MPRC protocol communication.
  *
  * Provides a higher-level API for connecting to MPRC servers,
  * sending commands, and handling responses with proper cleanup.
+ *
+ * Supports both plain TCP and TLS-encrypted connections.
+ *
+ * @example
+ * ```typescript
+ * // Plain TCP connection
+ * const conn = new MPRCConnection({ host: "192.168.1.1" });
+ *
+ * // TLS-encrypted connection
+ * const secureCon = new MPRCConnection({
+ *   host: "mail.example.com",
+ *   tls: { enabled: true, rejectUnauthorized: true }
+ * });
+ * ```
  */
 export declare class MPRCConnection {
     private socket;
     private host;
     private port;
+    private tlsOptions?;
     private connected;
     /**
      * Creates a new MPRC connection instance.
@@ -100,7 +174,7 @@ export declare class MPRCConnection {
      */
     constructor(options: ConnectionOptions);
     /**
-     * Establishes a TCP connection to the target server.
+     * Establishes a TCP or TLS connection to the target server.
      *
      * @param timeout - Connection timeout in milliseconds
      * @returns Promise that resolves when connected
@@ -128,6 +202,10 @@ export declare class MPRCConnection {
      */
     isConnected(): boolean;
     /**
+     * Returns whether this connection is using TLS encryption.
+     */
+    isSecure(): boolean;
+    /**
      * Returns the target host address.
      */
     getHost(): string;
@@ -135,12 +213,19 @@ export declare class MPRCConnection {
      * Returns the target port number.
      */
     getPort(): number;
+    /**
+     * Returns TLS connection information if using TLS.
+     * Useful for debugging certificate issues.
+     */
+    getTLSInfo(): tls.TLSSocket["getPeerCertificate"] | null;
 }
 /**
  * Sends a single command to a target server and returns the response.
  *
  * This is a convenience function for one-off requests. It handles
  * connection establishment, command sending, and cleanup automatically.
+ *
+ * Supports both plain TCP and TLS-encrypted connections.
  *
  * @param host - Target server host address
  * @param command - The MPRC command to send
@@ -149,9 +234,17 @@ export declare class MPRCConnection {
  *
  * @example
  * ```typescript
+ * // Plain TCP
  * const response = await sendSingleCommand<VerifyProtocolCommandResponse>(
  *   "192.168.1.1",
  *   { command: "VERIFY", requestId: crypto.randomUUID() }
+ * );
+ *
+ * // TLS-encrypted
+ * const secureResponse = await sendSingleCommand<VerifyProtocolCommandResponse>(
+ *   "mail.example.com",
+ *   { command: "VERIFY", requestId: crypto.randomUUID() },
+ *   { tls: { enabled: true } }
  * );
  * ```
  */
