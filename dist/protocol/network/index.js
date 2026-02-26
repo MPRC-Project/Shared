@@ -14,6 +14,80 @@ import { MPRC_PORT, DEFAULT_TIMEOUT_MS, CONNECTION_TIMEOUT_MS, } from "../../con
 import { NetworkError, DnsResolutionError, ConnectionError, TimeoutError, } from "../errors.js";
 const resolve4Async = promisify(dns.resolve4);
 /**
+ * Known TLS error codes emitted by Node.js's tls/ssl layer.
+ * These map to OpenSSL error codes surfaced via `err.code`.
+ */
+const TLS_ERROR_HINTS = {
+    // Certificate trust errors
+    DEPTH_ZERO_SELF_SIGNED_CERT: "The server is using a self-signed certificate. " +
+        "Either provide the CA cert via `tls.ca`, or set `tls.rejectUnauthorized: false` for development.",
+    SELF_SIGNED_CERT_IN_CHAIN: "A self-signed certificate was found in the certificate chain. " +
+        "Either provide the CA cert via `tls.ca`, or set `tls.rejectUnauthorized: false` for development.",
+    UNABLE_TO_GET_ISSUER_CERT: "The issuer certificate of the server cert could not be found. Provide the full certificate chain via `tls.ca`.",
+    UNABLE_TO_GET_ISSUER_CERT_LOCALLY: "The issuer certificate is not trusted by this system. Provide the CA cert via `tls.ca`.",
+    UNABLE_TO_VERIFY_LEAF_SIGNATURE: "Could not verify the server certificate signature. Provide the correct CA cert via `tls.ca`.",
+    CERT_UNTRUSTED: "The server certificate is not trusted. Provide the CA cert via `tls.ca`.",
+    CERT_REJECTED: "The server certificate was explicitly rejected. Check your `tls.ca` configuration.",
+    // Certificate validity errors
+    CERT_HAS_EXPIRED: "The server's TLS certificate has expired. The server administrator needs to renew it.",
+    CERT_NOT_YET_VALID: "The server's TLS certificate is not yet valid (starts in the future). Check system clock or contact server admin.",
+    ERR_TLS_CERT_ALTNAME_INVALID: "The server's certificate does not cover this hostname (Subject Alternative Name mismatch). " +
+        "Ensure you are connecting to the correct host, or set `tls.servername` explicitly.",
+    HOSTNAME_MISMATCH: "The server's certificate hostname does not match the connected host. " +
+        "Ensure you are connecting to the correct host, or set `tls.servername` explicitly.",
+    // Protocol/version errors
+    ERR_SSL_WRONG_VERSION_NUMBER: "TLS version mismatch — the server may not support TLS, or only supports an older version. " +
+        "Try adjusting `tls.minVersion` / `tls.maxVersion`.",
+    ERR_SSL_NO_PROTOCOLS_AVAILABLE: "No mutually supported TLS protocol versions. Adjust `tls.minVersion` or `tls.maxVersion`.",
+    ERR_SSL_TLSV1_ALERT_PROTOCOL_VERSION: "The server rejected the TLS protocol version. Try setting `tls.minVersion: 'TLSv1.2'`.",
+    ERR_SSL_SSLV3_ALERT_HANDSHAKE_FAILURE: "TLS handshake failed. This may indicate a cipher suite mismatch or certificate issue.",
+    ERR_SSL_DECRYPTION_FAILED_OR_BAD_RECORD_MAC: "TLS decryption failed. The connection may have been tampered with, or there is a version mismatch.",
+    // Connection errors
+    ECONNREFUSED: "The connection was refused — the server is not listening on this port, or a firewall is blocking it.",
+    ECONNRESET: "The connection was reset by the server. The server may have closed the connection during TLS handshake.",
+    ETIMEDOUT: "The connection timed out before TLS handshake completed.",
+    ENOTFOUND: "The hostname could not be resolved. Check that the host address is correct.",
+};
+/**
+ * Builds a descriptive `ConnectionError` for TLS failures by inspecting the
+ * underlying Node.js / OpenSSL error code.
+ *
+ * @param err - The raw error from the TLS socket
+ * @param host - Target host
+ * @param port - Target port
+ * @param tlsOptions - The TLS options that were in use (used to add context)
+ * @returns A `ConnectionError` with an actionable message
+ */
+function buildTLSConnectionError(err, host, port, tlsOptions) {
+    const code = err.code ?? "UNKNOWN";
+    const hint = TLS_ERROR_HINTS[code];
+    let message;
+    if (hint) {
+        message = `TLS connection to ${host}:${port} failed [${code}]: ${hint}`;
+    }
+    else {
+        message =
+            `TLS connection to ${host}:${port} failed [${code}]: ${err.message}. ` +
+                `If using a self-signed certificate, set tls.rejectUnauthorized: false or provide tls.ca.`;
+    }
+    // Append a reminder when rejectUnauthorized is true and the error looks certificate-related
+    const certRelatedCodes = new Set([
+        "DEPTH_ZERO_SELF_SIGNED_CERT",
+        "SELF_SIGNED_CERT_IN_CHAIN",
+        "UNABLE_TO_GET_ISSUER_CERT",
+        "UNABLE_TO_GET_ISSUER_CERT_LOCALLY",
+        "UNABLE_TO_VERIFY_LEAF_SIGNATURE",
+        "CERT_UNTRUSTED",
+        "CERT_REJECTED",
+    ]);
+    if (certRelatedCodes.has(code) &&
+        (tlsOptions?.rejectUnauthorized ?? true) === true) {
+        message +=
+            " (Currently `rejectUnauthorized: true` — set to `false` to skip cert validation during development.)";
+    }
+    return new ConnectionError(message, host, port, err);
+}
+/**
  * Extracts the domain part from an email address.
  *
  * @param email - The email address to parse
@@ -190,8 +264,9 @@ export class MPRCConnection {
                 });
             }
             this.socket.on("error", (err) => {
-                const protocol = useTLS ? "TLS" : "TCP";
-                cleanup(new ConnectionError(`Failed to connect to ${this.host}:${this.port} (${protocol})`, this.host, this.port, err));
+                cleanup(useTLS
+                    ? buildTLSConnectionError(err, this.host, this.port, this.tlsOptions)
+                    : new ConnectionError(`Failed to connect to ${this.host}:${this.port} (TCP): ${err.message}`, this.host, this.port, err));
             });
             timeoutHandle = setTimeout(() => {
                 const protocol = useTLS ? "TLS" : "TCP";
