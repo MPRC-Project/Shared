@@ -13,8 +13,6 @@ export * from "./command/index.js";
 export * from "./storage/mail-storage.js";
 export * from "./admin-auth.js";
 export * from "./network/index.js";
-// Encryption
-export * from "./encryption/index.js";
 // Errors
 export * from "./errors.js";
 //# sourceMappingURL=index.js.map
