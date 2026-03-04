@@ -13,4 +13,5 @@ export * from "./storage/mail-storage.js";
 export * from "./admin-auth.js";
 export * from "./network/index.js";
 export * from "./errors.js";
+export * from "./encryption/index.js";
 //# sourceMappingURL=index.d.ts.map

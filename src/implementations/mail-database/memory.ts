@@ -106,6 +106,7 @@ export class InMemoryMailDatabase implements IMailDatabase {
    */
   async storeMessage(message: Message): Promise<StoredMessage> {
     const { attachments, ...messageWithoutAttachments } = message;
+
     const storedMessage: StoredMessage = {
       ...messageWithoutAttachments,
       receivedAt: new Date(),

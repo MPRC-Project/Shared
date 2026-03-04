@@ -23,3 +23,5 @@ export * from "./network/index.js";
 
 // Errors
 export * from "./errors.js";
+
+export * from "./encryption/index.js";

@@ -20,12 +20,12 @@ export interface MessageAttachment {
      */
     content: string;
     /** Size of the attachment in bytes */
-    size?: number;
+    size?: number | undefined;
     /**
      * MIME type of the attachment.
      * Reserved for future use - not currently validated.
      */
-    mimeType?: string;
+    mimeType?: string | undefined;
 }
 /**
  * Metadata about a stored attachment.
@@ -41,6 +41,6 @@ export interface AttachmentMetadata {
     /** Size of the attachment in bytes */
     size: number;
     /** MIME type of the attachment (reserved for future use) */
-    mimeType?: string;
+    mimeType?: string | undefined;
 }
 //# sourceMappingURL=attachment.d.ts.map

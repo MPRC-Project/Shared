@@ -69,17 +69,17 @@ export interface Message {
   /** Message body content as structured elements */
   body: MessageBody;
   /** Optional timestamp when the message was sent */
-  sentAt?: Date;
+  sentAt?: Date | undefined;
   /** Optional timestamp when the message was received */
-  receivedAt?: Date;
+  receivedAt?: Date | undefined;
   /** Optional array of attachment references */
-  attachments?: MessageAttachment[];
+  attachments?: MessageAttachment[] | undefined;
   /** Optional parameter, references the ID of the message this is a response to */
-  responseTo?: string;
+  responseTo?: string | undefined;
   /** Optional array of tags associated with the message */
-  tags?: string[];
+  tags?: string[] | undefined;
   /** Optional folder or mailbox where the message is stored */
-  folder?: string;
+  folder?: string | undefined;
 }
 
 /**
